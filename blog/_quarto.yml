@@ -1,0 +1,23 @@
+project:
+  type: website
+
+website:
+  title: "blog"
+  navbar:
+    right:
+      - about.qmd
+      - icon: github
+        href: https://github.com/galenballew
+      - icon: linkedin
+        href: https://linkedin.com/in/galenballew
+      - icon: envelope-at
+        href: mailto:galenballew@gmail.com
+format:
+  html:
+    theme:
+      dark: slate
+      light: spacelab
+    css: styles.css
+
+
+
