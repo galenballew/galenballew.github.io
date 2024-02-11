@@ -1,4 +1,4 @@
-# galenballew.github.io
+# [galenballew.github.io](galenballew.github.io)
 Personal website built using Quarto
 
 ## How to publish
