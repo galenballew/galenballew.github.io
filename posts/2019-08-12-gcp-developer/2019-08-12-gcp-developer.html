@@ -6,10 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Tristan O’Malley">
-<meta name="dcterms.date" content="2024-02-07">
+<meta name="dcterms.date" content="2019-08-12">
+<meta name="description" content="Become the AppDev wizard you were meant to be.">
 
-<title>blog - Welcome To My Blog</title>
+<title>blog - GCP Professional Cloud Developer Certification</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -72,7 +72,7 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../../styles.css">
 </head>
 
 <body class="nav-fixed fullcontent">
@@ -123,9 +123,16 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Welcome To My Blog</h1>
-                                <div class="quarto-categories">
-                <div class="quarto-category">news</div>
+      <h1 class="title">GCP Professional Cloud Developer Certification</h1>
+                  <div>
+        <div class="description">
+          Become the AppDev wizard you were meant to be.
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">gcp</div>
+                <div class="quarto-category">certification</div>
+                <div class="quarto-category">devops</div>
               </div>
                   </div>
   </div>
@@ -133,17 +140,11 @@ ul.task-list li input[type="checkbox"] {
   
   <div class="quarto-title-meta">
 
-      <div>
-      <div class="quarto-title-meta-heading">Author</div>
-      <div class="quarto-title-meta-contents">
-               <p>Tristan O’Malley </p>
-            </div>
-    </div>
       
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">February 7, 2024</p>
+        <p class="date">August 12, 2019</p>
       </div>
     </div>
     
@@ -162,11 +163,122 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<p>This is the first post in a Quarto blog. Welcome!</p>
-<p><img src="thumbnail.jpg" class="img-fluid"></p>
-<p>Since this post doesn’t specify an explicit <code>image</code>, the first image in the post will be used in the listing page of posts.</p>
+<section id="abstract" class="level1">
+<h1>Abstract</h1>
+<p>These are the raw format notes that I took while studying for the <a href="https://cloud.google.com/certification/cloud-developer">Google Cloud Professional Cloud Developer Certification</a>. I’ve linked to the various materials that I used to study in the <strong>Resources</strong> section at the bottom. I passed the test and am <a href="https://www.credential.net/profile/galenballew/wallet">officially certified!</a></p>
+</section>
+<section id="code-and-environment-management" class="level1">
+<h1>Code and Environment Management</h1>
+<ul>
+<li>Use git or something similar</li>
+<li>do not store jar file or other binaries in git
+<ul>
+<li>build them on demand</li>
+</ul></li>
+<li>do not store dependencies in git
+<ul>
+<li>install them via a requirements file at build</li>
+<li>remember to use explicit versions!</li>
+</ul></li>
+<li>don’t store configuration constants within the code itself
+<ul>
+<li>use a separate configuration file</li>
+<li>set them as environment varibles</li>
+</ul></li>
+</ul>
+<p>Benefits of microservice architecture compared to a monolithic application: - service boundaries roughly match business boundaries. e.g., payments are processed via the payments service, invoicing is done by the invoicing service. - services can be updated, deployed, and <strong>scaled</strong> independently of each other.</p>
+<p>In order to achieve the promise of microservices, each service must be stateless. Being stateful causes availability issues if an instance of a service goes down and accessing a shared state is a bottleneck for scalability. Stateless service instances can start up quickly and shutdown gracefully.</p>
+</section>
+<section id="security-reliability-and-migration" class="level1">
+<h1>Security, Reliability, and Migration</h1>
+<ul>
+<li>implement healthchecks on storage, database, compute, network, etc
+<ul>
+<li>you can use this to route requests to unhealthy enpoints to a status page and return a 200.</li>
+</ul></li>
+<li>collect, monitor, analyze logs. you can use log-based metrics to enable event triggering (e.g., autoscaling, notification, etc)</li>
+<li>applications must be be resilient to both transient and long-lasting errors when accessing data/resources in a distributed system.
+<ul>
+<li>for transient errors, use <code>retry</code> logic with exponential backoff</li>
+<li>for long running errors, use flags/toggles to avoid/darken the service until it can be restored
+<ul>
+<li>called “implementing a circuit breaker”</li>
+</ul></li>
+</ul></li>
+<li>perform high-availability/load testing and develop a disastery recovery plan
+<ul>
+<li>this is in addition to functional and performance testing</li>
+<li>execute your disaster recovery plan as part of a scheduled “game day” by simulating failures
+<ul>
+<li>example failure scenarios include region/zone failure, deployment rollback, or network connectivity errors</li>
+</ul></li>
+</ul></li>
+<li>automate wherever possible, working towards a DevSecOps methodology via CICD pipelines</li>
+<li>use the strangler method to re-architect applications
+<ul>
+<li>migrate one component of a monolithic application at a time while leaving the original application fully functional</li>
+<li>requests can be easily directed to the new or old appliction</li>
+<li>this is a low risk migration pattern since it will not affect any business critical needs</li>
+</ul></li>
+</ul>
+</section>
+<section id="datastore" class="level1">
+<h1>Datastore</h1>
+<ul>
+<li><p>Objects are called <code>entities</code>.</p></li>
+<li><p>Entities are either root entities or have <code>ancestors</code>.</p></li>
+<li><p>Entities are composed of their <code>key</code> and <code>properties</code></p>
+<ul>
+<li>key is composed of namespace, entity <code>kind</code>, id, and ancestor id</li>
+<li>properties can have one or more values</li>
+</ul></li>
+<li><p>operations on one or more entities are called <code>transactions</code> and are <em>atomic</em></p>
+<ul>
+<li>atomicity means that either <strong><em>all</em></strong> operations in a transaction are applied or <strong><em>none</em></strong> are.</li>
+</ul></li>
+<li><p>entities of the same kind do not need to have a consistent property set</p></li>
+<li><p>built-in indexes</p>
+<ul>
+<li>automatic index of each property of each kind</li>
+</ul></li>
+<li><p>composite indexes</p>
+<ul>
+<li>index multiple property values</li>
+<li>defined in an index configuration file</li>
+<li>too many will increase latency to achieve consistency</li>
+</ul></li>
+</ul>
+<p>3 types of queries:<br>
+1) use <code>keys-only</code> when you only need the entity key<br>
+2) use <code>projection-query</code> when you only need specific properties from the entity or properties included in the query filter<br>
+3) use <code>ancestor-query</code> when you need strongly consistency</p>
+<p>Datastore is excellent for structured data that is non-relational. It scales extremely well. However, unlike relational databases, it does not support <code>join</code> operations. It does not support inequality filtering on multiple properties. It does not support filtering based on results of a subquery. Practically speaking, this means that you will often make two or more inequality queries and then compute the intersection.</p>
+<p>Remember that Datastore stores keys lexographically. High read/write activity to a local neighborhood of keys (or a relatively new key) will result in bottlenecks. For numeric keys, you can use the allocateIds() method to get keys that are distributed for performance. Outside of that, avoid negative numbers, the number zero, and monotomically increasing numbers.</p>
+<p>If you need higher read capacity of a portion of the key range, you can use replication.</p>
+<p>Datastore transactions can fail when they run longer than 60 seconds, there are too many concurrent writes to the same entity group, or a transaction operates on more than 25 different entity groups. Datastore can return exceptions in cases where the transaction will eventually be committed succesfully - therefore, design your transactions to be idempotent. Idempotent means that a the final state will be the same even if a transaction is processed multiple times.</p>
+</section>
+<section id="monitoring-and-tuning-performance" class="level1">
+<h1>Monitoring and Tuning Performance</h1>
+<p>Be sure to measure and visualize The 4 Golden Metrics:<br>
+1) Latency<br>
+- Differentiate between successful and unsuccessful requests<br>
+2) Traffic<br>
+3) Errors<br>
+4) Saturation</p>
+</section>
+<section id="resources" class="level1">
+<h1>Resources:</h1>
+<ul>
+<li><a href="https://cloud.google.com/blog/products/gcp/12-best-practices-for-user-account">12 best practices for user account, authorization and password management</a></li>
+<li><a href="https://cloud.google.com/appengine/docs/the-appengine-environments">Choosing an App Engine environment</a></li>
+<li><a href="https://www.coursera.org/specializations/developing-apps-gcp">Developing Applications with Google Cloud Platform Specialization</a></li>
+<li><a href="https://cloud.google.com/apis/design/">Google API Design Guide</a></li>
+<li><a href="https://cloud.google.com/bigtable/docs/schema-design">Big Table Schema Design</a></li>
+<li><a href="https://cloud.google.com/bigquery/batch">Big Query Batch</a></li>
+</ul>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
