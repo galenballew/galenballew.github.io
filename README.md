@@ -12,3 +12,14 @@ https://icons.getbootstrap.com/
 
 ## Themes
 https://bootswatch.com/
+
+## example .qmd header
+```
+---
+title: "Post With Code"
+author: "Harlow Malloc"
+date: "2024-02-10"
+categories: [news, code, analysis]
+image: "image.jpg"
+---
+```

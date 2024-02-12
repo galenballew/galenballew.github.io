@@ -1,0 +1,17 @@
+---
+title: "Interactive Visualization of S3"
+date: "2016-08-01"
+description: "Stereographic projection of a 4-dimensional dataset into 3d virtual reality"
+categories: [mathematics, unity, vr, visualization]
+---
+
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/r7CtHOn792c" frameborder="0" allowfullscreen></iframe>
+
+
+This application was developed in a Summer 2016 project at the
+[Mathematical Computing Laboratory](http://mcl.math.uic.edu/) at
+[UIC](http://uic.edu/). It shows the hyperbolic space $S3 projected into 3 dimensions. This Unity build was then made VR capable for peripherals like the Oculus Rift.  
+This project was completed under the guidance and mentorship of [Professor David Dumas](http://homepages.math.uic.edu/~ddumas/PML/). If you are interested in the mathematics of projective measured laminations, you can read about Professor Dumas' work [here.](http://homepages.math.uic.edu/~ddumas/PML/)
+
+You can view the repository [here.](https://github.com/galenballew/IVS3-UIC-2016)

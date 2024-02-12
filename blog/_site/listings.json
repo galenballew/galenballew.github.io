@@ -2,9 +2,30 @@
   {
     "listing": "/index.html",
     "items": [
-      "/posts/post-with-code/index.html",
-      "/posts/hello-notebook/hello.html",
-      "/posts/welcome/index.html"
+      "/posts/2021-01-18-mythical-man-month/2021-01-18-mythical-man-month.html",
+      "/posts/2020-09-16-k8s-best-practices/2020-09-16-k8s-best-practices.html",
+      "/posts/2020-09-15-how-to-win-friends/2020-09-15-how-to-win-friends.html",
+      "/posts/2020-09-14-terraform/2020-09-14-terraform.html",
+      "/posts/2020-07-17-digital-gardens/2020-07-17-digital-gardens.html",
+      "/posts/2019-09-15-kuar-part4/2019-09-15-kuar-part4.html",
+      "/posts/2019-09-12-kuar-part3/2019-09-12-kuar-part3.html",
+      "/posts/2019-09-09-kuar-part2/2019-09-09-kuar-part2.html",
+      "/posts/2019-09-08-kuar-part1/2019-09-08-kuar-part1.html",
+      "/posts/2019-08-23-how-and-why-capitalism-needs-to-be-reformed/2019-08-23-how-and-why-capitalism-needs-to-be-reformed.html",
+      "/posts/2019-08-12-gcp-developer/2019-08-12-gcp-developer.html",
+      "/posts/2019-04-17-the-6-Rs-of-migration/2019-04-17-the-6-Rs-of-migration.html",
+      "/posts/2019-02-24-how-i-built-this-website/2019-02-24-how-i-built-this-website.html",
+      "/posts/2019-04-12-aws-solutions-architect-professional-study-guide/2019-04-12-aws-solutions-architect-professional-study-guide.html",
+      "/posts/2017-05-12-how-i-got-my-job/2017-05-12-how-i-got-my-job.html",
+      "/posts/2017-05-10-are-bootcamps-worth-it/2017-05-10-are-bootcamps-worth-it.html",
+      "/posts/2017-02-03-board-games-machine-learning/2017-02-03-board-games-machine-learning.html",
+      "/posts/2016-08-01-isv3/2016-08-01-isv3.html",
+      "/posts/2016-05-25-elliptic-curves/2016-05-25-elliptic-curves.html",
+      "/posts/2016-04-11-scivis/2016-04-11-scivis.html",
+      "/posts/2017-02-17-opencv-lane-detection/2017-02-17-opencv-lane-detection.html",
+      "/posts/2015-12-05-metaselfie/2015-12-05-metaselfie.html",
+      "/posts/2015-10-27-visap/2015-10-27-visap.html",
+      "/posts/2015-04-11-fractal-interactive/2015-04-11-fractal-interactive.html"
     ]
   }
 ]

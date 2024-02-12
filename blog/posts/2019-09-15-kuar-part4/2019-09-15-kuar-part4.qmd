@@ -1,0 +1,83 @@
+---
+title: 'TL;DR - Kubernetes Up & Running, Part 4'
+date: "2019-09-15"
+description: The saga concludes.
+categories: [gcp, cloud, k8s, aws, kubernetes]
+banner: './k8s.png'
+---
+
+# Abstract
+These are my notes from reading [_Kubernetes Up & Running_](https://smile.amazon.com/Kubernetes-Running-Dive-Future-Infrastructure/dp/1491935677) by Kelsey Hightower, Brendan Burns, and Joe Beda. Kelsey Hightower is a Staff Developer Advocate for the Google Cloud Platform. Brendan Burns is a Distinguished Engineer in Microsoft Azure and cofounded the Kubernetes project at Google. Joe Beda is the CTO of Heptio and cofounded the Kubernetes project, as well as Google Compute Engine.  
+
+This is a phenomenal book that covers both the whys and hows of [Kubernetes](https://kubernetes.io/). I read the 1st edition, but a 2nd edition is coming out soon. I'm using this as study material for my [CKAD](https://www.cncf.io/certification/ckad/) and [CKA](https://training.linuxfoundation.org/certification/certified-kubernetes-administrator-cka/) certifications.  
+
+This article is part of a series. You can read [Part 1]({{ site.baseurl }}{% link _posts/2019-09-08-kuar-part1.md %}), [Part 2]({{ site.baseurl }}{% link _posts/2019-09-09-kuar-part2.md %}), and [Part 3]({{ site.baseurl }}{% link _posts/2019-09-12-kuar-part3.md %}).
+
+
+## Chapter 12: Deployments
+Much like how ReplicaSets manage the Pods beneath them, the `Deployment` object manages ReplicaSets beneath it. Deployments are used to manage the release of new versions and roll those changes out in a simple, reliable fashion. Deployments are a top-level object when compared to ReplicaSets. This means that if you scale a ReplicaSet, the Deployment controller will scale back to the desired state defined in the *Deployment*, not in the ReplicaSet.  
+
+Deployments revolve around their ability to perform a rollout. Rollouts are able to be paused, resumed, and undone. You can undo both partial and completed rollouts. Additionally, the rollout history of a Deployment is retained within the object and you can rollback to a specific version. For Deployments that are long-running, it's a best practice to limit the size of the revision history so that the Deployment object does not become bloated. For example, if you rollout changes every day and you need 2 weeks of revision history, you would set `spec.revisionHistoryLimit` to 14. Undoing a rollout (i.e., rolling back) follows all the same policies as the rollout strategy.  
+
+Because Deployments make it easy to roll back and forth between versions, it is **absolutely paramount** that each version of your application is capable of working interchangeably with both slightly older and slightly newer versions. This backwards and forwards compatibility is critical for decoupled, distributed systems and frequent deployments.  
+
+Deployments can have two different values for `.spec.strategy.type`: `Recreate` or `RollingUpdate`. If `.spec.strategy.type==Recreate`, the Deployment will terminate all Pods associated with it and the associated ReplicaSet will re-create them. This is a fast and simple approach, but results in downtime. It should only be used in testing. `RollingUpdate` is much more sophisticated and is the default configuration. `RollingUpdate` can be configured using 2 different parameters/approaches:
+  1. `maxUnavailable`: this parameter can be set as an absolute number or a percentage. If it is set to a value of 1, a single Pod will be terminated and re-created using the new version. After establishing that the Pod is ready, the rollout will proceed to the next Pod. This decreases capacity by the parameter value at any given time.
+  2. `maxSurge`: this parameter can be set as an absolute number or a percentage. If it is set to a value of 1, a single Pod will be created using the new version. After establishing that the Pod is ready, *Pod from the previous version will be deleted.* This increases capacity by the parameter value at any given time.  
+
+**Bonus material:** It is not explicitly mentioned in the book, but you can combine these two parameters. In fact, the default setting is 25% for both.  
+
+When performing a rollout, the Deployment controller needs to determine if a Pod is ready before moving on to the next Pod. This means that you *have* to specify readiness checks in your Pod templates. Beyond this, Deployments also support the `minReadSeconds` parameter. This is a waiting period that begins *after* the Pod is marked as ready. `minReadySeconds` can help catch bugs that take a few minutes to show up (e.g., memory leaks). Similar to `minReadSeconds`, the parameter `progressDeadlineSeconds` is used to define a timeout limit for the deployment. It's important to note that this timer is measured by progress, not overall length of the rollout. In this context, progress is defined as any time the deployment creates or deletes a Pod. When that happen, the `progressDeadlineSeconds` timer resets. If the deployment does timeout, it is marked as a failure.  
+
+**Bonus material:** The following is not explained explicitly in the book, but is available in the [documentation](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/).  
+
+Once the deadline has been exceeded, the Deployment controller adds a DeploymentCondition with the following attributes to the Deployment’s `.status.conditions`:   
+```
+Type=Progressing
+Status=False
+Reason=ProgressDeadlineExceeded
+```  
+**Note:** Kubernetes takes no action on a stalled Deployment other than to report a status condition with `Reason=ProgressDeadlineExceeded`. Higher level orchestrators can take advantage of it and act accordingly, for example, rollback the Deployment to its previous version.
+
+
+## Chapter 13: Integrating Storage Solutions and Kubernetes
+Decoupling state from your applications and applying a microservice architecture allows you to achieve incredible scale and reliability, but it does not remove the need for state. Kubernetes has several ways to store or access state depending on the needs of the application.  
+
+**Importing External Services**  
+If your database, or any other service, is running outside of the Kubernetes cluster, it's worthwhile to be able to represent this service using native k8s API definitions. By representing the service as an object within Kubernetes, you can maintain identical configurations between environments by using namespaces. A simple example is using `namespace: test` for your k8s-native proxy/testing services, but using `namespace: prod` to point to the production database that is running outside of the cluster on-premise or somewhere else. For a typical `Service`, a ClusterIP is provisioned and `kube-dns` creates an A record to route to the `Service`. If we need to route to the DNS name of an external service, we can use the `ExternalName` type to have `kube-dns` create a CNAME record instead.  
+
+```yaml
+kind: Service
+apiVersion: v1
+metadata:  
+  name: external-database
+spec:
+  type: ExternalName
+  externalName: "external.database.galenballew.fyi"
+```
+If the external database is only accessible via an IP address (or multiple IP addresses) you can create a `Service` without a `spec` (i.e., without a label selector and without `ExternalName` type). This will create a ClusterIP for the service and an A record, but there will be no IP addresses to load balance to. You will need to manually create an `Endpoints` object and associate it with the `Service`. If the IP address or addresses change, you are also responsible for updating the `Endpoints` object. You are also responsible for all health checks for external services and how your application will handle unavailability.  
+
+**Running Reliable Singletons**  
+Running a storage solution on a single `Pod`, VM, or server trades the complexity of distributing the data for the risk of downtime. Within Kubernetes, we can use k8s primitives to run singletons with some measure of reliability by combining `ReplicaSet`, `PersistentVolume`, and `PersistentVolumeClaim` objects. The actual disk is represented using a `PersistentVolume`. Kubernetes provides drivers for all the major public cloud providers - you just provide the type in the `spec` and k8s handles the rest. A `PersistentVolumeClaim` is used decouple our `Pod` definition from the storage definition. In this way, a `Pod` manifest can be cloud agnostic by referencing a `PersistentVolumeClaim` that is composed of `PersistentVolumes` of various types/providers. Similarly, if we want to decouple our `PersistentVolumeClaim` from specific, pre-existing `PersistentVolumes`, we can define a `StorageClass` object that can be referenced by a `PersistentVolumeClaim`. This object allows k8s operators to create disk on-demand and enables dynamic volume provisioning.  
+
+**StatefulSets**  
+`StatefulSet`s are very similar to `ReplicaSets`, except for 3 differences:  
+1. Each replica gets a persistent hostname with a unique index instead of the random suffix usually attached by the `ReplicaSet` controller (e.g., database-0, database-1, ..., database-n)  
+2. Each replica is created in order from lowest to highest index. Creation is blocked until the preceding replica is healthy and available instead of creating all the replicas in parallel. This also applies to scaling up.  
+3. When deleted, each replica is deleted in order from highest to lowest index. This also applies to scaling down.  
+When you create a `StatefulSet`, you will need to create a "headless" `Service` to manage it: a `Service` that does not provision a cluster virtual IP address. Since each replica in the `StatefulSet` is unique, it doesn't make sense to have a load-balancing IP for them. To create a headless `Service`, simply use `clusterIP: None` in the specification. After the service is created, a DNS entry will be created for each unique replica, as well as a DNS entry for the `StatefulSet` itself that contains the addresses of all the replicas. These well-defined, persistent names for each replica and the ability to route to them is critical when configuring a replicated storage solution. For actual disk, `StatefulSet`s will need to use `volumeClaimTemplates` since there will be multiple replicas (they can't all use the same unique volume claim). The volume claim template can be configured to reference a `StorageClass` to enable dynamic provisioning.    
+
+**Bonus material:** [Operators](https://github.com/operator-framework/awesome-operators) are incredibly useful in Kubernetes. They include the logic needed to have applications behave as desired within Kubernetes (e.g., scaling, sharding, and promotion for a distributed database). Check out [Awesome Operators](https://github.com/operator-framework/awesome-operators) to see examples.
+
+
+## Chapter 14: Deploying Real-World Applications
+This chapter presents 3 different walk-throughs of deploying real-world applications. The applications are [Parse](https://parseplatform.org/), [Ghost](https://ghost.org/), and [Redis](https://redis.io/). 
+
+## Appendix A: Building a Raspberry Pi Kubernetes Cluster
+The appendix includes instructons on how to set up a cluster of [Raspberry Pi](https://www.raspberrypi.org/) devices and install Kubernetes on them. 
+
+
+# Resources: 
+- _Kubernetes Up & Running_ [GitHub repository](https://github.com/kubernetes-up-and-running)
+- [Deployments](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) - k8s documentation
+

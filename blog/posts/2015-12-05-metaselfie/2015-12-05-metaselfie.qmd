@@ -1,0 +1,20 @@
+---
+title: "Metaselfie"
+date: "2015-12-05"
+description: "Fractal animation with original soundscape"
+categories: [visualization, autodesk maya, mathematics]
+---
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/wMAPatgvSxE" frameborder="0" allowfullscreen></iframe>
+</p>
+
+This [repository](https://github.com/galenballew/Metaselfie) contains the build files for *Metaselfie*.  
+3d modeling, animation, and compositing by Galen Ballew  
+Sound production by [Fractalstein](soundcloud.com/fractalstein)
+
+
+<p align="center">
+	<img src="https://raw.githubusercontent.com/galenballew/Metaselfie/master/scaling_0557.png" />
+	<img src="https://raw.githubusercontent.com/galenballew/Metaselfie/master/still_flower_0716.png" />
+	<img src="https://raw.githubusercontent.com/galenballew/Metaselfie/master/still_flower_0900.png" />
+</p>

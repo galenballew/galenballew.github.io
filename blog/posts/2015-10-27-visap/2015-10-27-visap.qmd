@@ -1,0 +1,12 @@
+---
+title: "VisAP 2015"
+date: "2015-10-27"
+description: "Data Improvisations: The IEEE Visual Arts Program Exhibition"
+categories: [visualization]
+---
+
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/wzEEHGf0FO0" frameborder="0" allowfullscreen></iframe>
+</p>
+
+All video and editing done by Galen Ballew.

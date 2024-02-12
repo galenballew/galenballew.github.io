@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.549">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2021-01-18">
+<meta name="description" content="TL;DR - Looking at managing large software projects from 1975 to 1995.">
+
+<title>blog - The Mythical Man-Month</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">blog</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/galenballew"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://linkedin.com/in/galenballew"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="mailto:galenballew@gmail.com"> <i class="bi bi-envelope-at" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">The Mythical Man-Month</h1>
+                  <div>
+        <div class="description">
+          TL;DR - Looking at managing large software projects from 1975 to 1995.
+        </div>
+      </div>
+                </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">January 18, 2021</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<section id="table-of-contents" class="level3">
+<h3 class="anchored" data-anchor-id="table-of-contents">Table of Contents</h3>
+<ul>
+<li><a href="#abstract">Abstract</a></li>
+<li><a href="#summary">Summary</a>
+<ul>
+<li><a href="#chap-1">Chapter 1. The Tar Pit</a></li>
+<li><a href="#chap-2">Chapter 2. The Mythical Man-Month</a></li>
+<li><a href="#chap-3">Chapter 3. The Surgical Team</a></li>
+<li><a href="#chap-4">Chapter 4. Aristocracy, Democracy, and System Design</a></li>
+<li><a href="#chap-5">Chapter 5. The Second-System Effect</a></li>
+<li><a href="#chap-6">Chapter 6. Passing the World</a></li>
+<li><a href="#chap-7">Chapter 7. Why Did the Tower of Babel Fail?</a></li>
+<li><a href="#chap-8">Chapter 8. Calling the Shot</a></li>
+<li><a href="#chap-9">Chapter 9. Ten Pounds in a Five-Pound Sack</a></li>
+<li><a href="#chap-10">Chapter 10. The Documentary Hypothesis</a></li>
+<li><a href="#chap-11">Chapter 11. Plan to Throw One Away</a></li>
+<li><a href="#chap-12">Chapter 12. Sharp Tools</a></li>
+<li><a href="#chap-13">Chapter 13. The Whole and the Parts</a></li>
+<li><a href="#chap-14">Chapter 14. Hatching a Catastrophe</a></li>
+<li><a href="#chap-15">Chapter 15. The Other Face</a></li>
+<li><a href="#epilogue">Original Epilogue</a></li>
+</ul></li>
+<li><a href="#chap-16">No Silver Bullet</a></li>
+</ul>
+</section>
+<section id="abstract" class="level3">
+<h3 class="anchored" data-anchor-id="abstract"><a name="abstract"></a><a href="#abstract">Abstract</a></h3>
+<p>I recently read <em><a href="https://en.wikipedia.org/wiki/The_Mythical_Man-Month">The Mythical Man-Month</a></em> by Frederick Brooks. This book continually shows up on various recommended reading lists for folks working in technology, so I thought I would give it a go. I read the anniversary edition, which was published in 1995, 20 years after the first edition. The first 15 chapters are directly from the first edition, with later chapters either being new content or commentary on previous content.</p>
+<p>Normally I would transcribe the notes I take during reading into a summary article. However, Brooks supplies a very thorough and complete summary himself in chapter 18. It seemed a shame not to put it to good use, since it captures some of the nuances of writing computer programs in 1975 that my notes do not.</p>
+<p>I provide my own highly condensed summary of the essay <em>No Silver Bullet</em> (Chapter 16), in whichBrooks argues that “there is no single development, in either technology or management technique, which by itself promises even one order-of-magnitude improvement within a decade in productivity, in reliability, in simplicity.”</p>
+<p>Even if you’re not interested in reading the book, I would suggest this essay for anyone who works in software engineering. Specifically for Brooks’ defintion of <em>essential</em> and <em>accidental</em> tasks and his discussion on why software engineering is inherently difficult.</p>
+</section>
+<section id="propositions-of-the-mythical-man-month-true-or-false" class="level3">
+<h3 class="anchored" data-anchor-id="propositions-of-the-mythical-man-month-true-or-false"><a name="summary"></a><a href="#summary">Propositions of The Mythical Man-Month: True or False?</a></h3>
+<p>The following is text from chapter 18 of <em><a href="https://en.wikipedia.org/wiki/The_Mythical_Man-Month">The Mythical Man-Month</a></em> by Frederick Brooks:</p>
+<section id="chapter-1.-the-tar-pit" class="level4">
+<h4 class="anchored" data-anchor-id="chapter-1.-the-tar-pit"><a name="chap-1"></a><a href="#chap-1">Chapter 1. The Tar Pit</a></h4>
+<ul>
+<li>1.1<br>
+A programming systems product takes about nine times as much effort as the component programs written separately for private use. I estimate that productizing imposes a factor of three; and that designing, integrating, and testing components into a coherent system imposes a factor of three; and that these cost components are essentially independent of each other.</li>
+<li>1.2<br>
+The craft of programming “gratifies creative longings built deep within us and delights sensibilities we have in common with all men,” providing five kinds of joys:
+<ul>
+<li>The joy of making things</li>
+<li>The joy of making things that are useful to other people</li>
+<li>The fascination of fashioning puzzle-like objects of interlocking moving parts</li>
+<li>The joy of always learning, of a nonrepeating task</li>
+<li>The delight of working in a medium so tractable—pure thought-stuff— which nevertheless exists, moves, and works in a way that word-objects do not.</li>
+</ul></li>
+<li>1.3<br>
+Likewise, the craft has special woes inherent in it.
+<ul>
+<li>Adjusting to the requirement of perfection is the hardest part of learning to program.</li>
+<li>Others set one’s objectives and one must depend upon things (especially programs) one cannot control; the authority is not equal to the responsibility.</li>
+<li>This sounds worse than it is: actual authority comes from momentum of accomplishment.</li>
+<li>With any creativity come dreary hours of painstaking labor; programming is no exception.</li>
+<li>The programming project converges more slowly the nearer one gets to the end, whereas one expects it to converge faster as one approaches the end.</li>
+<li>One’s product is always threatened with obsolescence before completion. The real tiger is never a match for the paper one, unless real use is wanted.</li>
+</ul></li>
+</ul>
+</section>
+<section id="chapter-2.-the-mythical-man-month" class="level4">
+<h4 class="anchored" data-anchor-id="chapter-2.-the-mythical-man-month"><a name="chap-2"></a><a href="#chap-2">Chapter 2. The Mythical Man-Month</a></h4>
+<ul>
+<li>2.1<br>
+More programming projects have gone awry for lack of calendar time than for all other causes combined.</li>
+<li>2.2<br>
+Good cooking takes time; some tasks cannot be hurried without spoiling the result.</li>
+<li>2.3<br>
+All programmers are optimists: “All will go well.”</li>
+<li>2.4<br>
+Because the programmer builds with pure thought-stuff. we expect few difficulties in implementation.</li>
+<li>2.5<br>
+But our <em>ideas</em> themselves are faulty, so we have bugs.</li>
+<li>2.6<br>
+Our estimating techniques, built around cost-accounting, confuse effort and progress. <em>The man-month is a fallacious and dangerous myth, for it implies that men and months are interchangeable.</em></li>
+<li>2.7<br>
+Partitioning a task among multiple people occasions extra communication effort—training and intercommunication.</li>
+<li>2.8<br>
+My rule of thumb is 1/3 of the schedule for design, 1/6 for coding, 1/4 for component testing, and 1/4 for system testing.</li>
+<li>2.9<br>
+As a discipline, we lack estimating data.</li>
+<li>2.10<br>
+Because we are uncertain about our scheduling estimates, we often lack the courage to defend them stubbornly against management and customer pressure.</li>
+<li>2.11<br>
+Brook’s Law: Adding manpower to an already late software project makes it later.</li>
+<li>2.12<br>
+Adding people to a software project increases the total effort necessary in three ways: the work and disruption of repartitioning itself, training the new people, and added intercommunication.</li>
+</ul>
+</section>
+<section id="chapter-3.-the-surgical-team" class="level4">
+<h4 class="anchored" data-anchor-id="chapter-3.-the-surgical-team"><a name="chap-3"></a><a href="#chap-3">Chapter 3. The Surgical Team</a></h4>
+<ul>
+<li>3.1<br>
+Very good professional programmers are <em>ten times</em> as productive as poor ones, at same training and two-year experience level. (Sackman, Grant, and Erickson)</li>
+<li>3.2<br>
+Sackman, Grant, and Erickson’s data showed no correlation whatsoever between experience and performance. I doubt the universality of that result.</li>
+<li>3.3<br>
+A small sharp team is best—as few minds as possible.</li>
+<li>3.4<br>
+A team of two, with one leader, is often the best use of minds.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></li>
+<li>3.5<br>
+A small sharp team is too slow for really big systems.</li>
+<li>3.6<br>
+Most experiences with really large systems show the brute-force approach to scaling up to be costly, slow, inefficient, and to produce systems that are not conceptually integrated.</li>
+<li>3.7<br>
+A chief-programmer, surgical-team, organization offers a way to get the product integrity of few minds and the total productivity of many helpers, with radically reduced communication.</li>
+</ul>
+</section>
+<section id="chapter-4.-aristocracy-democracy-and-system-design" class="level4">
+<h4 class="anchored" data-anchor-id="chapter-4.-aristocracy-democracy-and-system-design"><a name="chap-4"></a><a href="#chap-4">Chapter 4. Aristocracy, Democracy, and System Design</a></h4>
+<ul>
+<li>4.1<br>
+“Conceptual integrity is <em>the</em> most important consideration in system design.”</li>
+<li>4.2<br>
+“The <em>ratio</em> of function to conceptual complexity is the ultimate test of system design,” not just the richness of function. [This ratio is a measure of ease of use, valid over both simple and difficult uses.]</li>
+<li>4.3<br>
+To achieve conceptual integrity, a design must proceed from one mind or a small group of agreeing minds.</li>
+<li>4.4<br>
+“Separation of architectural effort from implementation is a very powerful way of getting conceptual integration on very large projects.” [Small ones, too.]</li>
+<li>4.5<br>
+“If a system is to have conceptual integrity, someone must control the concepts. That is an aristocracy that needs no apology.”</li>
+<li>4.6<br>
+Discipline is good for art. The external provision of an architecture enhances, not cramps, the creative style of an implementing group.</li>
+<li>4.7<br>
+A conceptually integrated system is faster to build and to test.</li>
+<li>4.8<br>
+Much of software architecture, implementation, and realization can proceed in parallel. [Hardware and software design can likewise proceed in parallel.]</li>
+</ul>
+</section>
+<section id="chapter-5.-the-second-system-effect" class="level4">
+<h4 class="anchored" data-anchor-id="chapter-5.-the-second-system-effect"><a name="chap-5"></a><a href="#chap-5">Chapter 5. The Second-System Effect</a></h4>
+<ul>
+<li>5.1<br>
+Early and continuous communication can give the architect good cost readings and the builder confidence in the design, without blurring the clear division of responsibilities.</li>
+<li>5.2<br>
+How an architect can successfully influence implementation: <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>
+<ul>
+<li>Remember that the builder has the creative responsibility for implementation; the architect only suggests.</li>
+<li>Always be ready to suggest a way of implementing anything one specifies; be prepared to accept any other equally good way.</li>
+<li>Deal quietly and privately in such suggestions.</li>
+<li>Be ready to forgo credit for suggested improvements.</li>
+<li>Listen to the builder’s suggestions for architecture improvements.</li>
+</ul></li>
+<li>5.3<br>
+The second is the most dangerous system a person ever designs; the general tendency is to over-design it.</li>
+<li>5.4<br>
+OS/360 is a good example of the second-system effect. [Windows NT seems to be a 1990s example.]</li>
+<li>5.5<br>
+Assigning <em>a priori</em> values in bytes and microseconds to functions is a worthwhile discipline.</li>
+</ul>
+</section>
+<section id="chapter-6.-passing-the-word" class="level4">
+<h4 class="anchored" data-anchor-id="chapter-6.-passing-the-word"><a name="chap-6"></a><a href="#chap-6">Chapter 6. Passing the Word</a></h4>
+<ul>
+<li>6.1<br>
+Even when a design team is large, the results must be reduced to writing by one or two, in order that the mini-decisions be consistent.</li>
+<li>6.2<br>
+It is important to explicitly define the parts of an architecture that are <em>not</em> prescribed as carefully as those that are.</li>
+<li>6.3<br>
+One needs both a formal definition of a design, for precision, and a prose definition for comprehensibility.</li>
+<li>6.4<br>
+One of the formal and prose definitions must be standard, and the other derivative. Either definition can serve in either role.</li>
+<li>6.5<br>
+An implementation, including a simulation, can serve as an architectural definition; such use has formidable disadvantages.</li>
+<li>6.6<br>
+Direct incorporation is a very clean technique for enforcing an architectural standard in software. [In hardware, too—consider the Mac WIMP interface built into ROM.]</li>
+<li>6.7<br>
+An architectural “definition will be cleaner and the [architectural] discipline tighter if at least two implementations are built initially.”</li>
+<li>6.8<br>
+It is important to allow telephone interpretations by an architect in response to implementers’ queries; it is imperative to log these and publish them.<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> [Electronic mail is now the medium of choice.]</li>
+<li>6.9<br>
+“The project manager’s best friend is his daily adversary, the independent product-testing organization.”</li>
+</ul>
+</section>
+<section id="chapter-7.-why-did-the-tower-of-babel-fail" class="level4">
+<h4 class="anchored" data-anchor-id="chapter-7.-why-did-the-tower-of-babel-fail"><a name="chap-7"></a><a href="#chap-7">Chapter 7. Why Did the Tower of Babel Fail?</a></h4>
+<ul>
+<li>7.1<br>
+The Tower of Babel project failed because of lack of <em>communication</em> and of its consequent, <em>organization</em>. ##### Communication</li>
+<li>7.2<br>
+“Schedule disaster, function misfit, and system bugs all arise because the left hand doesn’t know what the right hand is doing.” Teams drift apart in assumptions.</li>
+<li>7.3<br>
+Teams should communicate with one another in as many ways as possible: informally, by regular project meetings with technical briefings, and via a shared formal project workbook. [And electronic mail.] ##### Project Workbook</li>
+<li>7.4<br>
+A project workbook is “not so much a separate document as it is a structure imposed on the documents that the project will be producing anyway.”</li>
+<li>7.5<br>
+“<em>All</em> the documents of the project need to be part of this [workbook] structure.”</li>
+<li>7.6<br>
+The workbook structure needs to be designed <em>carefully</em> and <em>early</em>.</li>
+<li>7.7<br>
+Properly structuring the on-going documentation from the beginning “molds later writing into segments that fit into that structure” and will improve the product manuals.</li>
+<li>7.8<br>
+“<em>Each</em> team member should see <em>all</em> the [workbook] material.” [I would now say, each team member <em>should be able</em> to see all of it. That is, World-Wide Web pages would suffice.]</li>
+<li>7.9<br>
+Timely updating is of critical importance.</li>
+<li>7.10<br>
+The user needs to have attention especially drawn to changes since his last reading, with remarks on their significance.</li>
+<li>7.11<br>
+The OS/360 Project workbook started with paper and switched to microfiche.</li>
+<li>7.12<br>
+Today [even in 1975], the shared electronic notebook is a much better, cheaper, and simpler mechanism for achieving all these goals.</li>
+<li>7.13<br>
+One still has to mark the text with [the functional equivalent of] change bars and revision dates. One still needs a LIFO electronic change summary.</li>
+<li>7.14<br>
+Parnas argues strongly that the goal of everyone seeing everything is <em>totally wrong</em>; parts should be encapsulated so that no one needs to or is allowed to see the internals of any parts other than his own, but should see only the interfaces.</li>
+<li>7.15<br>
+Parnas’s proposal is a recipe for disaster. [<em>I have been quite convinced otherwise by Parnas, and totally changed my mind.</em>] ##### Organization</li>
+<li>7.16<br>
+The purpose of the organization is to reduce the amount of communication and coordination necessary.</li>
+<li>7.17<br>
+Organization embodies <em>division of labor</em> and <em>specialization of function</em> in order to obviate communication.</li>
+<li>7.18<br>
+The conventional tree organization reflects the <em>authority</em> structure principle that no person can serve two masters.</li>
+<li>7.19<br>
+The <em>communication</em> structure in an organization is a network, not a tree, so all kinds of special organization mechanisms (“dotted lines”) have to be devised to overcome the communication deficiencies of the tree-structured organization.</li>
+<li>7.20<br>
+Every subproject has two leadership roles to be filled, that of the <em>producer</em> and that of the <em>technical director</em>, or <em>architect</em>. The functions of the two roles are quite distinct and require different talents.</li>
+<li>7.21 Any of three relationships among the two roles can be quite effective:
+<ul>
+<li>The producer and director can be the same.</li>
+<li>The producer may be boss, and the director the producer’s right-hand person.</li>
+<li>The director may be boss, and the producer the director’s right-hand person.</li>
+</ul></li>
+</ul>
+</section>
+<section id="chapter-8.-calling-the-shot" class="level4">
+<h4 class="anchored" data-anchor-id="chapter-8.-calling-the-shot"><a name="chap-8"></a><a href="#chap-8">Chapter 8. Calling the Shot</a></h4>
+<ul>
+<li>8.1<br>
+One cannot accurately estimate the total effort or schedule of a programming project by simply estimating the coding time and multiplying by factors for the other parts of the task.</li>
+<li>8.2<br>
+Data for building isolated small systems are not applicable to programming systems projects.</li>
+<li>8.3<br>
+Programming increases goes as a power of program size.</li>
+<li>8.4<br>
+Some published studies show the exponent to be about 1.5. [<em>Boehm’s data do not at all agree with this, but vary from 1.05 to 1.2.</em>]</li>
+<li>8.5<br>
+Portman’s ICL data show full-time programmers applying only about 50 percent of their time to programming and debugging, versus other overhead-type tasks.</li>
+<li>8.6<br>
+Aron’s IBM data show productivity varying from 1.5 K times of code (KLOC) per man-year to 10 KLOC/man-year as a function of the number of interactions among system parts.</li>
+<li>8.7<br>
+Harr’s Bell Labs data show productivities on operating-systems-type work to run about 0.6 KLOC/man-year and on compiler-type work about 2.2 KLOC/man-year for finished products.</li>
+<li>8.8<br>
+Brook’s OS/360 data agrees with Harr’s: 0.6—0.8 KLOC/man-year on operating systems and 2—3 KLOC/man-year on compilers.</li>
+<li>8.9<br>
+Corbató’s MIT Project MULTICS data show productivity of 1.2 KLOC/man-year on a mix of operating systems and compilers, but these are PL/I lines of code, whereas all the other data are assembler lines of code!</li>
+<li>8.10<br>
+Productivity seems constant in terms of elementary statements.</li>
+<li>8.11<br>
+Programming productivity may be increased as much as five times when suitable high-level language is used.</li>
+</ul>
+</section>
+<section id="chapter-9.-ten-pounds-in-a-five-pound-sack" class="level4">
+<h4 class="anchored" data-anchor-id="chapter-9.-ten-pounds-in-a-five-pound-sack"><a name="chap-9"></a><a href="#chap-9">Chapter 9. Ten Pounds in a Five-Pound Sack</a></h4>
+<ul>
+<li>9.1<br>
+Aside from running time, the <em>memory space</em> occupied by a program is a principal cost. This is especially true for operating systems, where much is resident all the time.</li>
+<li>9.2<br>
+Even so, money spent on memory for program residence may yield very good functional value per dollar, better than other ways of investing in configuration. Program size is not bad; unnecessary size is.</li>
+<li>9.3<br>
+The software builder must set size targets, control size, and devise size-reduction techniques, just as the hardware builder does for components.</li>
+<li>9.4<br>
+Size budgets must be explicit not only about resident size but also about the disk accesses occasioned by program fetches.</li>
+<li>9.5<br>
+Size budgets have to be tied to function assignments; define exactly what a module must do when you specify how big it must be.</li>
+<li>9.6<br>
+On large teams, subteams tend to sub-optimize to meet their own targets rather than think about the total effect on the user. This breakdown in orientation is a major hazard of large projects.</li>
+<li>9.7<br>
+All during implementation, the system architects must maintain constant vigilance to ensure continued system integrity.</li>
+<li>9.8<br>
+Fostering a total-system, user-oriented attitude may well be the msot important function of the programming manager.</li>
+<li>9.9<br>
+An early policy decision is to decide how fine-grained the user choice of options will be, since packaging them in clumps saves memory space [and often marketing costs].</li>
+<li>9.10<br>
+The size of the transient area, hence of the amount of program per disk fetch, is a crucial decision, since performance is a super-linear function of that size. [This whole decision has been obsoleted, first by virtual memory, then by cheap real memory. Users now typically buy enough real memory to hold all the code of major applications.]</li>
+<li>9.11<br>
+To make good space-time tradeoffs, a team needs to be trained in the programming techniques peculiar to a particular language or machine, especially a new one.</li>
+<li>9.12<br>
+Programming has a technology, and every project needs a library of standard components.</li>
+<li>9.13<br>
+Program libraries should have two versions of each component, the quick and the squeezed. [This seems obsolete today.]</li>
+<li>9.14<br>
+Lean, spare, fast programs are almost always the result of <em>strategic breakthrough</em>, rather than tactical cleverness.</li>
+<li>9.15<br>
+Often such a breakthrough will be a new <em>algorithm.</em></li>
+<li>9.16<br>
+More often, the breakthrough will come from redoing the <em>representation</em> of the data or tables. <em>Representation is the essence of programming.</em></li>
+</ul>
+</section>
+<section id="chapter-10.-the-documentary-hypothesis" class="level4">
+<h4 class="anchored" data-anchor-id="chapter-10.-the-documentary-hypothesis"><a name="chap-10"></a><a href="#chap-10">Chapter 10. The Documentary Hypothesis</a></h4>
+<ul>
+<li>10.1<br>
+“The hypothesis: Amid a wash of paper, a small number of documents become the critical pivots around which every project’s management revolves. These are the manager’s chief personal tools.”</li>
+<li>10.2<br>
+For a computer development project, the critical documents are the objectives, manual, schedule, budget, organization chart, floorspace allocation, and the estimate, forecast, and prices of the machine itself.</li>
+<li>10.3<br>
+For a university department, the critical documents are similar: the objectives, degree requirements, course descriptions, research proposals, class schedule and teaching plan, budget, floorspace allocation, and assignments of staff and graduate assistants.</li>
+<li>10.4<br>
+For a software project, the needs are the same: the objectives, user manual, internals documentation, schedule, budget, organization chart, and floorspace allocation.</li>
+<li>10.5<br>
+Even on a small project, therefore, the manager should from the beginning formalize such a set of documents.</li>
+<li>10.6<br>
+Preparing each document of this small set focuses thought and crystallizes discussion. The act of writing requires hundreds of mini-decisions, and it is the existence of these that distinguish clear, exact policies from fuzzy ones.</li>
+<li>10.7<br>
+Maintaining each critical document provides a status surveillance and warning mechanism.</li>
+<li>10.8<br>
+Each document itself serves as a checklist and a database.</li>
+<li>10.9<br>
+The project manager’s fundamental job is to keep everybody going in the same direction.</li>
+<li>10.10<br>
+The project manager’s chief daily task is communication, not decision-making; the documents communicate the plans and decisions to the whole team.</li>
+<li>10.11<br>
+Only a small part of a technical project manager’s time—perhaps only 20 percent—is spent on tasks where he needs information from outside his head.</li>
+<li>10.12<br>
+For this reason, the touted market concept of a “management total-information system” to support executives is not based on a valid model of executive behavior.</li>
+</ul>
+</section>
+<section id="chapter-11.-plan-to-throw-one-away" class="level4">
+<h4 class="anchored" data-anchor-id="chapter-11.-plan-to-throw-one-away"><a name="chap-11"></a><a href="#chap-11">Chapter 11. Plan to Throw One Away</a></h4>
+<ul>
+<li>11.1<br>
+Chemical engineers have learned not to take a process from the lab bench to the factory in one step, but to build a <em>pilot plant</em> to give experience in scaling quantities up and operating in nonprotective environments.</li>
+<li>11.2<br>
+This intermediate step is equally necessary for programming products, but software engineers do not yet routinely field-test a pilot system before undertaking to deliver the real product. [This has now become common practice, with a beta version. This is not the same as a prototype with limited function, an alpha version, which I would also advocate.]</li>
+<li>11.3<br>
+For most projects, the first system built is barely usable: too slow, too big, too hard to use, or all three.</li>
+<li>11.4<br>
+The discard and redesign may be done in one lump, or piece-by-piece, but <em>it will be done.</em></li>
+<li>11.5<br>
+Delivering the first system, the throwaway, to users will buy time, but only at the cost of agony for the user, distraction for the builders supporting it while they do the redesign, and a bad reputation for the product that will be hard to live down.</li>
+<li>11.6<br>
+Hence, <em>plan to throw one away; you will, anyhow.</em></li>
+<li>11.7<br>
+“The programmer delivers satisfaction of a user need rather than any tangible product.” (Cosgrove)</li>
+<li>11.8<br>
+Both the actual need and the user’s perception of that need will <em>change</em> as programs are built, tested, and used.</li>
+<li>11.9<br>
+The tractability and the invisibility of the software product expose its builders (exceptionally) to perpetual changes in requirements.</li>
+<li>11.10<br>
+Some valid changes in objectives (and in development strategies) are inevitable, and it is better to be prepared for them than to assume that they will not come.</li>
+<li>11.11<br>
+The techniques for planning a software product for change, especially structured programming with careful module interface documentation, are well known but not uniformly practiced. It also helps to use table-driven techniques wherever possible. [Modern memory costs and sizes make such techniques better and better.]</li>
+<li>11.12<br>
+Use high-level language, compile-time operations, incorporations of declarations by reference, and self-documenting techniques to reduce errors induced by change.</li>
+<li>11.13<br>
+Quantify changes into well-defined numbered versions. [Now standard practice.] ##### Plan the Organization for Change</li>
+<li>11.14<br>
+Programmer reluctance to document designs comes not so much from laziness as from the hesitancy to undertake defense of decisions that the designer knows are tentative. (Cosgrove)</li>
+<li>11.15<br>
+Structuring an organization for change is much harder than designing a system for change.</li>
+<li>11.16<br>
+The project boss must work at keeping the managers and the technical people as interchangeable as their talents allow; in particular, one wants to be able to move people easily between technical and managerial roles.</li>
+<li>11.17<br>
+The barriers to effective dual-ladder organization are sociological, and they must be fought with constant vigilance and energy.</li>
+<li>11.18<br>
+It is easy to establish corresponding salary scales for the corresponding rungs on a dual ladder, but it requires strong proactive measures to give them corresponding prestige: equal offices, equal support services, over-compensating management actions.</li>
+<li>11.19<br>
+Organizing as a surgical team is a radical attack on all aspects of this problem. It is really the long-run answer to the problem of flexible organization. ##### Two Steps Forward and One Step Back—Program Maintenance</li>
+<li>11.20<br>
+Program maintenance is fundamentally different from hardware maintenance; it consists chiefly of changes that repair design defects, add incremental function, or adapt to changes in the use environment or configuration.</li>
+<li>11.21<br>
+The total lifetime cost of maintaining a widely used program is typically 40 percent or more of the cost of developing it.</li>
+<li>11.22<br>
+Maintenance cost is strongly affected by the number of users. More users find more bugs.</li>
+<li>11.23<br>
+Campbell points out an interesting drop-and-climb curve in bugs per month over a product’s life.</li>
+<li>11.24<br>
+Fixing a defect has a substantial (20 to 50 percent) chance of introducing another.</li>
+<li>11.25<br>
+After each fix, one must run the entire bank of test cases previously run against a system to ensure that it has not been damaged in an obscure way.</li>
+<li>11.26<br>
+Methods of designing programs so as to eliminate or at least illuminate side effects can have an immense payoff in maintenance costs.</li>
+<li>11.27<br>
+So can methods of implementing designs with fewer people, fewer interfaces, and fewer bugs. ##### One Step Forward and One Step Back—System Entropy Rises over Lifetime</li>
+<li>11.28<br>
+Lehman and Belady find that the total number of modules increases linearly with the release number of a large operating system (OS/360), but that the number of modules affected increases exponentially with the release number.</li>
+<li>11.29<br>
+All repairs tend to destroy structure, to increase the entropy and disorder of a system. Even the most skillful program maintenance only delays the program’s subsidence into unfixable chaos, from which there has to be a ground-up redesign. [Many of the real needs for upgrading a program, such as performance, especially attack its internal structural boundaries. Often the original boundaries occasioned the deficiencies that surface later.]</li>
+</ul>
+</section>
+<section id="chapter-12.-sharp-tools" class="level4">
+<h4 class="anchored" data-anchor-id="chapter-12.-sharp-tools"><a name="chap-12"></a><a href="#chap-12">Chapter 12. Sharp Tools</a></h4>
+<ul>
+<li>12.1<br>
+The manager of a project needs to establish a philosophy and set aside resources for the building of common tools, and at the same time to recognize the need for personalized tools.</li>
+<li>12.2<br>
+Teams building operating systems need a target machine of their own on which to debug; it needs maximum memory rather than maximum speed, and a system programmer to keep the standard software current and serviceable.</li>
+<li>12.3<br>
+The debugging machine, or its software, also needs to be instrumented, so that counts and measurements of all kinds of program parameters can be automatically made.</li>
+<li>12.4<br>
+The requirement for target machine use has a peculiar growth curve: low activity followed by explosive growth, then leveling off.</li>
+<li>12.5<br>
+System debugging, like astronomy, has always been done chiefly at night.</li>
+<li>12.6<br>
+Allocating substantial blocks of target machine time to one subteam at a time proved the best way to schedule, much better than interleaving subteam use, despite theory.</li>
+<li>12.7<br>
+This preferred method of scheduling scarce computers by blocks has survived 20 years [in 1975] of technology change because it is most productive. [It still in, in 1995].</li>
+<li>12.8<br>
+If a target computer is new, one needs a logical simulator for it. One gets it <em>sooner</em>, and it provides a <em>dependable</em> debugging vehicle even after one has a real machine.</li>
+<li>12.9<br>
+A master program library should be divided into (1) a set of individual playpens, (2) a system integration sublibrary, currently under system test, and (3) a released version. Formal separation and progression gives control.</li>
+<li>12.10<br>
+The tool that saves the most labor in a programming project is probably a text-editing system.</li>
+<li>12.11<br>
+Voluminosity in system documentation does indeed introduce a new kind of incomprehensibility [see Unix, for example], but it is far preferable to the severe underdocumentation that is so common.</li>
+<li>12.12<br>
+Build a performance simulator, outside in, top down. Start it very early. Listen when it speaks. ##### High-Level Language</li>
+<li>12.13<br>
+Only sloth and inertia prevent the universal adoption of high-level language and interactive programming. [And today they have been adopted universally].</li>
+<li>12.14<br>
+High-level language improves not only productivity but also debugging; fewer bugs and easier to find.</li>
+<li>12.15<br>
+The classical objections of function, object-code space, and object-code speed have been made obsolete by the advance of language and compiler technology.</li>
+<li>12.16<br>
+The only reasonable candidate for system programming today is PL/I. [No longer true.] ##### Interactive Programming</li>
+<li>12.17<br>
+Interactive systems will never displace batch systems for some applications. [Still true.]</li>
+<li>12.18<br>
+Debugging is the hard and slow part of system programming, and slow turnaround is the bane of debugging.</li>
+<li>12.19<br>
+Limited evidence shows that interactive programming at least doubles productivity in system programming.</li>
+</ul>
+</section>
+<section id="chapter-13.-the-whole-and-the-parts" class="level4">
+<h4 class="anchored" data-anchor-id="chapter-13.-the-whole-and-the-parts"><a name="chap-13"></a><a href="#chap-13">Chapter 13. The Whole and the Parts</a></h4>
+<ul>
+<li>13.1<br>
+The detailed, painstaking architectural effort implied in Chapters 4, 5, and 6 not only makes a product easier to use, it makes it easier to build and reduces the number of system bugs that have to be found.</li>
+<li>13.2<br>
+Vyssotsky says “Many, many failures concern exactly those aspects that were never quite specified.”</li>
+<li>13.3<br>
+Long before any code itself, the specification must be handed to an outside testing group to be scrutinized for completeness and clarity. The developers themselves cannot do this. (Vyssotsky)</li>
+<li>13.4<br>
+“Wirth’s top-down design [by stepwise refinement] is the most important new programming formalization of the [1965-1975] decade.”</li>
+<li>13.5<br>
+Wirth advocates using as high-level a notation as possible on each step.</li>
+<li>13.6<br>
+A good top-down design avoids bugs in four ways.</li>
+<li>13.7<br>
+Sometimes one has to go back, scrap a high level, and start over.</li>
+<li>13.8<br>
+Structured programming, designing programs whose control structures consist only of a specified set that govern blocks of code (versus miscellaneous branching), is a sound way to avoid bugs and is the right way to think.</li>
+<li>13.9<br>
+Gold’s experimental results show three times as much progress is made in the first interaction of an interactive debugging session as on subsequent interactions. It still pays to plan debugging carefully before signing on. [I think it <em>still</em> does, in 1995.]</li>
+<li>13.10<br>
+I find that proper use of a good [quick response interactive debugging] system requires two hours at the desk for each two-hour session on the machine: one hour in sweeping up and documenting after the session and one in planning changes and tests for next time.</li>
+<li>13.11<br>
+System debugging (in contrast to component debugging) will take longer than one expects.</li>
+<li>13.12<br>
+The difficulty of system debugging justifies a thoroughly systematic and planned approach.</li>
+<li>13.13<br>
+One should begin system debugging only after the pieces seem to work (versus-bolt-it-together-and-try in order to smoke out the interface bugs; and versus starting system debugging when the component bugs are fully known but not fixed.)[This is especially true for teams.]</li>
+<li>13.14<br>
+It is worthwhile to build lots of debugging scaffolding and test code, perhaps even 50 percent as much as the product being debugged.</li>
+<li>13.15<br>
+One must control and document changes and versions, with team members working in playpen copies.</li>
+<li>13.16<br>
+Add one component at a time during system debugging.</li>
+<li>13.17<br>
+Lehman and Belady offer evidence the change quanta should be large and infrequent or else very small and frequent.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> [A Microsoft team makes small frequent quanta work. The growing system is rebuilt every night.]</li>
+</ul>
+</section>
+<section id="chapter-14.-hatching-a-catastrophe" class="level4">
+<h4 class="anchored" data-anchor-id="chapter-14.-hatching-a-catastrophe"><a name="chap-14"></a><a href="#chap-14">Chapter 14. Hatching a Catastrophe</a></h4>
+<ul>
+<li>14.1<br>
+“How does a project get to be a year late? . . . One day at a time.”</li>
+<li>14.2<br>
+Day-by-day schedule slippage is harder to recognize, harder to prevent, and harder to make up than calamities.</li>
+<li>14.3<br>
+The first step in controlling a big project on a tight schedule is to <em>have</em> a schedule, made up of milestones and dates for them.</li>
+<li>14.4<br>
+Milestones must be concrete, specific, measurable events defined with knife-edge sharpness.</li>
+<li>14.5<br>
+A programmer will rarely lie about milestone progress, if the milestone is so sharp he can’t deceive himself.</li>
+<li>14.6<br>
+Studies of estimating behavior by government contractors on large projects show that activity time estimates revised carefully every two weeks do not significantly change as the start time approaches, that during the activity <em>over</em>estimates come steadily down; and that <em>under</em>estimates do not change until about three weeks before scheduled completion.</li>
+<li>14.7<br>
+Chronic schedule slippage is a morale-killer. [Jim McCarthy of Microsoft says, “If you miss one deadline, make sure you make the next one.”]</li>
+<li>14.8<br>
+<em>Hustle</em> is essential for great programming teams, just as for great baseball teams.</li>
+<li>14.9<br>
+There is no substitute for a critical-path schedule to enable one to tell which slips matter how much.</li>
+<li>14.10<br>
+The preparation of a critical-path chart is the most valuable part of its use, since laying out the network, identifying the dependencies, and estimating the segments force a great deal of very specific planning very early in a project.</li>
+<li>14.11<br>
+The first chart is always terrible, and one invents and invents in making the next one.</li>
+<li>14.12<br>
+A critical path chart answers the demoralizing excuse, “The other piece is late, anyhow.”</li>
+<li>14.13<br>
+Every boss needs both exception information that requires action and a status picture for education and distant early warning.</li>
+<li>14.14<br>
+Getting the status is hard, since subordinate managers have every reason not to share it.</li>
+<li>14.15<br>
+By bad action, a boss can guarantee to squelch full status disclosure; conversely, carefully separating status reports and accepting them without panic or preemption will encourage honest reporting.</li>
+<li>14.16<br>
+One must have review techniques by which true status becomes known to all players. For this purpose a milestone schedule and completion document is key.</li>
+<li>14.17<br>
+Vyssotsky: “I have found it handy to carry both ‘scheduled’ (boss’s dates) and ‘estimated’ (lowest-level manager’s dates) dates in the milestone report. The project manager has to keep his fingers off the estimated dates.”</li>
+<li>14.18<br>
+A small <em>Plans and Controls</em> team that maintains the milestone report is invaluable for a large project.</li>
+</ul>
+</section>
+<section id="chapter-15.-the-other-face" class="level4">
+<h4 class="anchored" data-anchor-id="chapter-15.-the-other-face"><a name="chap-15"></a><a href="#chap-15">Chapter 15. The Other Face</a></h4>
+<ul>
+<li>15.1<br>
+For the program product, the other face to the user, the documentation, is fully as important as the face to the machine.</li>
+<li>15.2<br>
+Even for the most private of programs, prose documentation is necessary, for memory will fail the user-author.</li>
+<li>15.3<br>
+Teachers and managers have by and large failed to instill in programmers an attitude about documentation that will inspire for a lifetime, overcoming sloth and schedule pressure.</li>
+<li>15.4<br>
+This failure is not due so much to lack of zeal or eloquence as to a failure to show <em>how</em> to document effectively and economically.</li>
+<li>15.5<br>
+Most documentation fails in giving too little <em>overview</em>. Stand way back and zoom in slowly.</li>
+<li>15.6<br>
+The critical user documentation should be drafted before the program is built, for it embodies basic planning decisions. It should describe nine things (see the chapter).</li>
+<li>15.7<br>
+A program should be shipped with a few test cases, some for valid input data, some for borderline input data, and some for clearly invalid input data.</li>
+<li>15.8<br>
+Documentation of program internals, for the person who must modify it, also demands a prose overview, which should contain five kinds of things (see the chapter).</li>
+<li>15.9<br>
+The flow chart is a most thoroughly oversold piece of program documentation, the detailed blow-by-blow flow chart is a nuisance, obsoleted by <em>written</em> high-level languages. (A flow chart is a <em>diagrammed</em> high-level language.)</li>
+<li>15.10<br>
+Few programs need more than a one-page flow chart, if that. [MILSPEC documentation requirements are really wrong on this point.]</li>
+<li>15.11<br>
+One does indeed need a program structure graph, which does not need the ANSI flow-charting standards.</li>
+<li>15.12<br>
+To keep documentation maintained, it is crucial that it be incorporated in the source program, rather than kept as a separate document.</li>
+<li>15.13<br>
+Three notions are key to minimizing the documentation burden:
+<ul>
+<li>Use parts of the program that have to be there anyway, such as names and declarations, to carry as much of the documentation as possible.</li>
+<li>Use space and format to show subordination and nesting and to improve readability.</li>
+<li>Insert the necessary prose documentation into the program as paragraphs of comment, especially as module headers.</li>
+</ul></li>
+<li>15.14<br>
+In documentation for use by program modifiers, tell <em>why</em> things are like they are, rather than merely how they are. <em>Purpose</em> is the key to understanding; even high-level language syntax does not at all convey purpose.</li>
+<li>15.15<br>
+Self-documenting programming techniques find their greatest use and power in high-level languages used with on-line systems, which are the tools one <em>should</em> be using.</li>
+</ul>
+</section>
+<section id="original-epilogue" class="level4">
+<h4 class="anchored" data-anchor-id="original-epilogue"><a name="epilogue"></a><a href="#epilogue">Original Epilogue</a></h4>
+<ul>
+<li>E.1<br>
+Software systems are perhaps the most intricate and complex (in terms of number of distinct kinds of parts) of the things humanity makes.</li>
+<li>E.2<br>
+The tar pit of software engineering will continue to be sticky for a long time to come.</li>
+</ul>
+</section>
+</section>
+<section id="no-silver-bulletessence-and-accident-in-software-engineering" class="level3">
+<h3 class="anchored" data-anchor-id="no-silver-bulletessence-and-accident-in-software-engineering"><a name="chap-16"></a><a href="#chap-16">No Silver Bullet—Essence and Accident in Software Engineering</a></h3>
+<p>Software engineering is composed of two types of tasks: <em>essential</em> and <em>accidental</em>. Essential software engineering the process of fashioning logic into conceptual structures that compose the abstracted machine that is the software. Accidental tasks are all the things necessary to represent the essential byproduct in programming languages and mapping this onto machine languages within space and speed constraints.</p>
+<p>Essential work is exactly that because it cannot be reduced. The <em>essence</em> of software is the totality of the various data, algorithms, invocations, etc., and all their relations to each other. This construct is entirely abstract—it would remain the same regardless of the infinite number of ways it could be represented through different implementations. Brooks states:</p>
+<blockquote class="blockquote">
+<p>I believe the hard part of building software to be the specification, design, and testing of this conceptual construct, not the labor of representing it and testing the fidelity of the representation… If this is true, building software will always be hard. There is inherently no silver bullet.</p>
+</blockquote>
+<p>So, what are the characteristics of software’s <em>essence</em> that define it as such?</p>
+<ul>
+<li>Complexity
+<ul>
+<li>Software is more complex than anything else humans build. Not only are there no repeating elements—unlike architecture, for example—but the relations between elements create a dizzying number of different possible states. This is the basis for software’s astounding complexity; as the size of software grows, its complexity grows non-linearly, and often times, exponentially.</li>
+</ul></li>
+<li>Conformity
+<ul>
+<li>Software is created in order to conform to the needs of people, institutions, and businesses. This requirement to conform creates arbitrary complexity between the essential design and architecture of different software products—there are no universal, fundamental principles that inform the solution. The complexity introduced by the need to conform cannot be simplified away by a redesign of the software alone.</li>
+</ul></li>
+<li>Changeability
+<ul>
+<li>Software is subject to change from its inception. As successful software is used, more functionality is requested, bugs and defects are identified, the hardware it was originally created for ages, and new hardware becomes available.</li>
+</ul></li>
+<li>Invisibility
+<ul>
+<li>Software is invisible and unvisualizable, which the mind of some of its most powerful tools. Whatever graph or chart we may produce in an attempt to visualize software ends up only capturing some single dimension or aspect of it. Often times we need many diagrams, each with different relations to another, and their summation still falls short of capturing the complete picture.</li>
+</ul></li>
+</ul>
+<p>If we are to achieve order of magnitude improvements in building software, we must attack the essential tasks. What options do we have available to us?</p>
+<ul>
+<li>Buy versus build
+<ul>
+<li>Entire swaths of systems can be replaced by off-the-shelf applications if they are able to conform to your needs. As the software market grows, so does the quantity and quality of software that may fulfill your needs.</li>
+</ul></li>
+<li>Rapid prototyping
+<ul>
+<li>The hardest part of building a software system is deciding precisely what to build. Early design decisions have the largest impact and are the most difficult to rectify. Developing and using tools and processes to aid in rapid prototyping can ensure the right software is being built.</li>
+</ul></li>
+<li>Growing software
+<ul>
+<li>Software should be made to successfully execute from its inception—even if the software does nothing useful to begin with. This approach of always having working software necessitates top-down design and lends itself to early prototyping.</li>
+</ul></li>
+<li>Great designers
+<ul>
+<li>Software construction is a creative process and great designers are integral to the process. Great designers should be identified and nutured as early as possible.</li>
+</ul></li>
+</ul>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>The full quote is <code>"A team of two, with one leader, is often the best use of minds. [Note God's plan for marriage.]</code><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>Note the similarities between Brooks advice and that of Dale Carnegie’s <em><a href="https://galenballew.fyi/how-to-win-friends-influence-people">How to Win Friends and Influence People</a></em><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>This is a fantastic idea that I aim to adopt in my own architecture practice. I think that formalizing it into a weekly summary produces greater collective grokking than simply updating the necessary wiki pages.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>It is remarkable to see that support for practices similar to continuous integration go all the way back to 1975. It is equally remarkable that DevOps only came into its own right around 2012.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = true;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

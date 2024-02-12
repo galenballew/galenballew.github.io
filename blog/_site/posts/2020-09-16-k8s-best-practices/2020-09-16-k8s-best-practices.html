@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.549">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2020-09-16">
+<meta name="description" content="TL;DR - Blueprints for building successful applications on Kubernetes.">
+
+<title>blog - Kubernetes Best Practices</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">blog</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/galenballew"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://linkedin.com/in/galenballew"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="mailto:galenballew@gmail.com"> <i class="bi bi-envelope-at" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Kubernetes Best Practices</h1>
+                  <div>
+        <div class="description">
+          TL;DR - Blueprints for building successful applications on Kubernetes.
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">cloud</div>
+                <div class="quarto-category">k8s</div>
+                <div class="quarto-category">tldr</div>
+                <div class="quarto-category">kubernetes</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">September 16, 2020</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<section id="table-of-contents" class="level3">
+<h3 class="anchored" data-anchor-id="table-of-contents">Table of Contents</h3>
+<ul>
+<li><a href="#abstract">Abstract</a></li>
+<li><a href="#setting-up-a-basic-service">Setting Up a Basic Service</a></li>
+<li><a href="#developer-workflows">Developer Workflows</a></li>
+<li><a href="#telemetry">Monitoring and Logging in Kubernetes</a></li>
+<li><a href="#configuration-secrets-and-rbac">Configuration, Secrets, and RBAC</a></li>
+<li><a href="#cicd">Continuous Integration, Testing, and Deployment</a></li>
+<li><a href="#versioning-releases-and-rollouts">Versioning, Releases, and Rollouts</a></li>
+<li><a href="#distribution-and-staging">Worldwide Application Distribution and Staging</a></li>
+<li><a href="#resource-management">Resource Management</a></li>
+<li><a href="#networking">Networking, Network Security, and Service Mesh</a></li>
+</ul>
+</section>
+<section id="abstract" class="level3">
+<h3 class="anchored" data-anchor-id="abstract"><a name="abstract"></a><a href="#abstract">Abstract</a></h3>
+<p><a href="https://www.oreilly.com/library/view/kubernetes-best-practices/9781492056461/">Kubernetes Best Practices</a> was authored by Brendan Burns, Eddie Villalba, Dave Strebel, and Lachlan Evenson. These are the working notes that I took while reading the book. I have a solid working knowledge of Kubernetes and did not seek to regurgitate everything I read. Instead, I hope that this article consists of the juiciest tid bits and highlights that are easily consumable for anyone familiar with k8s. Enjoy!</p>
+</section>
+<section id="setting-up-a-basic-service" class="level3">
+<h3 class="anchored" data-anchor-id="setting-up-a-basic-service"><a name="setting-up-a-basic-service"></a><a href="#setting-up-a-basic-service">Setting Up a Basic Service</a></h3>
+<p>Kubernetes starts with containers - immutable containers to be specific. Do not use the <code>latest</code> tag for your image versions. Instead, use a combination of semantic versioning and the SHA hash of the commit where the image was built (e.g., v1.0.1-bfeda01f).</p>
+<p>It’s recommended to set a container’s Requests and Limits are set equal to each other. This results in very predictable pod behavior, as well as predictable utilization. You can certainly set the values for Requests and Limits independently in order to drive maximal utilization, but most users find that the stability/predictability from setting them equal is more valuable than the gained utilization.</p>
+<p>The key/values in a ConfigMap are subject to change. When a key/value needs to be updated, it may be tempting to edit the ConfigMap YAML and apply the update in-place. However, this will not trigger an update to existing Pods using the ConfigMap - they will only use the new configuration after a restart. Rather than updating the existing ConfigMap, adding version numbers to your ConfigMaps, deploying an entirely new ConfigMap, and updating the Deployment to use this new one. Rollout of the new configuration will be automatically triggered. Additionally, the previous version of the ConfigMap will still be available in the cluster - rollback is just a matter of updating the Deployment again.</p>
+<p>Secrets are stored unencrypted within etcd. If you want to protect that sensitive data from a direct attack against etcd, you can provide Kubernetes with a key that it will use to encrypt the data at rest. There’s more information available <a href="https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/">in the documentation.</a></p>
+<p>Generally speaking, managing state is hard. Also, generally speaking, stateful services (e.g., Redis as a service) are worth the extra cost. The book doesn’t offer any additional information or opinions beyond this, but there is an excellent <a href="https://cloud.google.com/blog/products/gcp/kubernetes-best-practices-mapping-external-services">blog article</a> by Google about mapping to external services. The book has an entire chapter on <a href="#integrating-external-services-and-kubernetes">integrating external services</a>, as well as a chapter on <a href="#managing-state-and-stateful-applications">managing state and stateful applications!</a></p>
+<p>Even if you’re an individual developer, you will eventually want your k8s configuration yaml to be deployed to multiple, different endpoints (e.g., dev, stage, prod). Rather than having multiple copies of the same code, you should use a packing tool like <a href="https://helm.sh/">Helm</a> to parametrize your configuration. Instead of having multiple copies of application YAML, you can have a single <code>values.yaml</code> per deployment environment and you can keep them all in a <code>templates/</code> directory at the root of your project. The book doesn’t talk about it, but this also gives you the added benefit of building modular, reusable k8s building blocks. These can be shared and leveraged across the company so that teams don’t need to reinvent the wheel.</p>
+</section>
+<section id="developer-workflows" class="level3">
+<h3 class="anchored" data-anchor-id="developer-workflows"><a name="developer-workflows"></a><a href="#developer-workflows">Developer Workflows</a></h3>
+<p>When thinking about developer interactions with a development cluster, it can be useful to break it down into three phases: 1. Onboarding - getting access to the cluster 2. Developing - getting bootstrapped and able to deploy 3. Testing - being able to iterate quickly and efficiently</p>
+<p>Generally speaking, it’s a best practice to use a single, large cluster for all developers and break it down into namespaces to keep things tidy. There is some additional overhead of managing this cluster as opposed to creating individual clusters per developer, but the increased resource utilization and availability of shared services (e.g., logging) make it worthwhile. When you’re operating in this model, it is also a good idea to give everyone read access to the entire cluster. This can help everyone debug in case your neighbor is breaking your deployment or hogging all the resources. However, it’s worth noting that the default read access will include Secrets. You can create fine-grain permissions that exclude Secrets if necessary, but it’s usually not a problem in a development environment.</p>
+<p>It can be extremely useful to automate as much of the namespace management as possible. This could be a script that creates a new namespace, adds users to it, defines the Requests and Limits, and sets a TTL. The idea of a TTL is useful because it helps keep the cluster lean and clean (and helps build good developer habits). You can enforce the TTL by writing a <a href="https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/">CronJob</a> to clean them up. You could also replace the script that instantiates the namespace with a <a href="https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/">CRD</a>!</p>
+<p>If your development namespace has a TTL, then you’re definitely going to want a script that installs all the necessary dependencies for your project. It is also a best practice to have a script that will delete and recreate your Deployments rather than update them in-place. In a development environment, you want your code changes to rollout quickly, but modifying the k8s rollout logic should only be done with extreme caution - you do not want to create drift between your development and production clusters.</p>
+</section>
+<section id="monitoring-and-logging-in-kubernetes" class="level3">
+<h3 class="anchored" data-anchor-id="monitoring-and-logging-in-kubernetes"><a name="telemetry"></a><a href="#telemetry">Monitoring and Logging in Kubernetes</a></h3>
+<p>There are two monitoring paradigms that complement each other and are useful in the context of Kubernetes: <strong>USE</strong> and <strong>RED</strong>.</p>
+<ul>
+<li><strong>U</strong> - Utilization</li>
+<li><strong>S</strong> - Saturation</li>
+<li><strong>E</strong> - Errors
+<p>
+</p></li>
+<li><strong>R</strong> - Rate</li>
+<li><strong>E</strong> - Errors</li>
+<li><strong>D</strong> - Duration</li>
+</ul>
+<p>USE focuses more on the infrastructure, whereas RED focuses on the end-user experience for the application. These patterns should help determine what you monitor, because monitoring everything is counter-productive (poor signal:noise ratio).</p>
+<p>Rather than focusing on the details of <a href="https://kubernetes.io/docs/tasks/debug-application-cluster/resource-metrics-pipeline/#the-metrics-api">the Metrics API</a>, <a href="https://github.com/kubernetes-sigs/metrics-server">Metrics Server</a>, <a href="https://github.com/kubernetes/kube-state-metrics">kube-state-metrics</a>, or any of the multitude of monitoring tools available (e.g., <a href="https://prometheus.io/docs/introduction/overview/">Prometheus</a>), I’d like to focus on what metrics should be captured. Monitoring should take a layered approach that takes into account the following: - Physical or virtual nodes - Cluster components - Cluster add-ons - End-user applications</p>
+<p>Given these layers, what metrics should be targeted? - Nodes - CPU utilization - Memory utilization - Network utilization - Disk utilization - Cluster components - etcd latency - Cluster add-ons - Cluster Autoscaler - Ingress Controller - Application - Container memory utilization and saturation - Container CPU utilization - Container network utilization and error rate - Application frame-work specific metrics</p>
+<p>With regards to logging, there are several components that you will need to capture logs from: - Node logs - Docker daemon - Kubernetes control-plane logs - API server - Controller manager - Scheduler - Kubernetes audit logs - Application controller logs</p>
+<p>It is worth mentioning that k8s audit logs can be extremely noisy. It’s worth using the <a href="https://kubernetes.io/docs/tasks/debug-application-cluster/audit/">documentation</a> to fine-tune them for your environment.</p>
+<p>Limit the usage of log forwarders in a sidecar pattern - they consume a lot more resources. Opt for using a DaemonSet for the log forwarder and sending the logs to STDOUT.</p>
+<p>The book mentions SRE practices like defining SLOs and measuring them using SLIs, but those methodologies are beyond the scope of the book. They’re still best practices though and should be implemented in order to provide a highly available, secure Kubernetes platform. All of the <a href="https://landing.google.com/sre/books/">Google books on SRE are available for free</a>.</p>
+</section>
+<section id="configuration-secrets-and-rbac" class="level3">
+<h3 class="anchored" data-anchor-id="configuration-secrets-and-rbac"><a name="configuration-secrets-and-rbac"></a><a href="#configuration-secrets-and-rbac">Configuration, Secrets, and RBAC</a></h3>
+<p>Generally speaking, the best way to approach any changes to a ConfigMap or Secret is to update the entire Deployment. This is because a change to the configuration object will not trigger an update of the Pods that reference/mount it. It is a best practice to use a version number in the <code>name</code> of the configuration object and change the <code>Deployment</code> to point at the new version. This will cause all of the Pods to update. It also makes rollback easy.</p>
+<p>You can assign an <code>imagePullSecrets</code> to a <code>serviceaccount</code> that the pod will use to automatically mount the secret without having to declare it in the <code>pod.spec</code>. You can do this to the default service account for the namespace and the secret will be automatically added to all the pods in that namespace.</p>
+<p>RBAC has a lot in common with AWS IAM as far as best practices for scope of privilege (TL;DR - use least privilege). I’ve left out most of the information about RBAC, but it is worth explicitly stating that <em>most</em> application that run on Kubernetes will <strong>not</strong> need an RBAC role or role binding. This is because most applications do not directly interact with the k8s API itself. In the case where an application does need to interface with the k8s API, it should use a purpose-specific service account with a least privileged role to execute its goal.</p>
+</section>
+<section id="continuous-integration-testing-and-deployment" class="level3">
+<h3 class="anchored" data-anchor-id="continuous-integration-testing-and-deployment"><a name="cicd"></a><a href="#cicd">Continuous Integration, Testing, and Deployment</a></h3>
+<p>CI/CD, DevOps, GitOps, etc., all deserve and have their own books about them. With regards to best practices for Kubernetes, there will a few specific and salient points that jumped out at me:</p>
+<ol type="1">
+<li>Whatever CI/CD tools that you choose must be able to define the pipeline as code. Storing the pipeline in version control alongside the application code is invaluable.</li>
+<li>Optimize your container images for size. Smaller images means more efficient development and lower security risk.
+<ul>
+<li>As you mature, you may become comfortable using a <a href="https://github.com/GoogleContainerTools/distroless">distroless base image.</a></li>
+<li>Use multi-stage builds to slim down containers. A classic example is to build your Go static binary and place only that into the production container - not all the packages that were used to build it.</li>
+</ul></li>
+<li><strong>Do not use the <code>latest</code> tag!</strong> Every container image tag should point to a specific version/build of the code.</li>
+<li>Kubernetes offers several different deployment strategies. If you’re just getting started, rolling deployments are the easiest to use. When using blue/green or canary, be sure to understand the implications for having two versions of your application available - especially as it relates to state and/or hybrid applications.</li>
+</ol>
+</section>
+<section id="versioning-releases-and-rollouts" class="level3">
+<h3 class="anchored" data-anchor-id="versioning-releases-and-rollouts"><a name="versioning-releases-and-rollouts"></a><a href="#versioning-releases-and-rollouts">Versioning, Releases, and Rollouts</a></h3>
+<p>Versioning should be a relatively straightforward task, but it’s a critical one. There are so many different types of Kubernetes API objects, each with their own version, that making sure everything is properly versioned becomes mission critical in order to enable smooth operations.</p>
+<p>As far as rollouts are concerned, it’s imperative to understand that changes to the metadata fields of a Deployment will not trigger an update. Only changes to the <code>spec.template</code> will trigger an update. This becomes important as you will have versions for containers, Pods, Deployments, Services, and the application itself - all of which should be distinct from each other.</p>
+<p>Use a release and release version/number in your Deployment metadata. The release name and number should coordinate with the actual release from your CI/CD tooling in order to enable traceability.</p>
+<p>If you’re using Helm, be sure to bundle services that need to be rolled back or upgraded together. You can use <a href="https://helm.sh/docs/topics/charts_hooks/">Helm chart hooks</a> to make sure that release lifecycle events go smoothly. Chart hooks allow events (e.g., run a Job, mount a ConfigMap, etc.) to be triggered at specific times in the release lifecycle (e.g., <code>pre-install</code>, <code>post-rollback</code>, etc.)</p>
+</section>
+<section id="worldwide-application-distribution-and-staging" class="level3">
+<h3 class="anchored" data-anchor-id="worldwide-application-distribution-and-staging"><a name="distribution-and-staging"></a> <a href="#distribution-and-staging">Worldwide Application Distribution and Staging</a></h3>
+<p>Starting with the fundamentals, it’s imperative to have your container images distributed to each region that your workload is running in. This helps to make rollouts more reliable by avoiding any networking issues that may crop up.</p>
+<p>Global rollouts should be preceded by rigorous integration testing. Ideally, you will have a copy of your production data available for this - try to think ahead <em>before</em> you’re scaled up. Setting up good integration testing is easier early on in the development of an application and it pays serious dividends in the long run. Load-testing should also be performed. Replaying the logged traffic is a good starting point, but not always fool-proof.</p>
+<p>Once you’re ready to begin the rollout, a canary region should be selected and deployed to. Your customers will use this region as a preproduction environment to validate <em>their</em> use of your service before continuing the rollout. Generally speaking, a decent rule of thumb is to leave this deployment in the canary region for double the average time-to-smoke.</p>
+<p>Lastly, be sure to document and <strong>practice</strong> your response to any problems or processes that you encounter. There should be runbooks for everything you need to do - nothing should be done from memory.</p>
+</section>
+<section id="resource-management" class="level3">
+<h3 class="anchored" data-anchor-id="resource-management"><a name="resource-management"></a><a href="#resource-management">Resource Management</a></h3>
+<p>Both the general guidelines and the specific implementations of resource management depend on the workload and the underlying hardware it requires. Any specialized hardware (e.g., GPUs) should be accessed with taints and/or nodeSelectors. Use nodeSelectors when you want to <em>request</em> specialized hardware and use taints when you want to <em>reserve</em> it. If you’re running multiple workloads with different performance requirements, be sure to include a mix of node pools with different instance types. If those workloads are variable or have unexpected spikes in usage, consider using the Horizontal Pod Autoscaler.</p>
+<p>As far as Pods go, everything should have its Requests and Limits defined. If a Pod’s Requests and Limits are equal, the Pod will receive a <em>guaranteed</em> Quality of Service (QoS) class. This is partly why it’s recommended to set them equal when you’re getting started on your k8s journey. However, guaranteed QoS requires that Requests and Limits are set <em>for all containers in a Pod</em>.</p>
+<p>Additionally, use PodDisruptionBudgets to manage how many Pods are (un)available during a disruption. This, in congruence with (anti-)affinity attributes, can ensure that your service remains highly available through out operations and outages.</p>
+</section>
+<section id="networking-network-security-and-service-mesh" class="level3">
+<h3 class="anchored" data-anchor-id="networking-network-security-and-service-mesh"><a name="networking"></a><a href="#networking">Networking, Network Security, and Service Mesh</a></h3>
+<p>Probably the single most important decision around networking is what Container Network Interface to use. This deserves its own article. The chosen CNI should deliver the feature set required, be compatible with your control plane (particularly important when consuming a managed service like AWS EKS), and be compatible with your network observability, management, and security tooling. And, if you choose to use a CNI that does not over a network overlay, you’ll need to make sure that you have enough CIDR to handle node IPs, Pod IPs, load balancers, and wiggle room for rollouts and scaling.</p>
+<p>The next big decision to make is the choice of Ingress controller. Just like choosing a CNI, a thorough investiation of feature set and compatability needs to be performed. Standardize the chosen Ingress controller across the enterpise because many of the specific configuration annotations vary between implementations. If you aren’t consistent, your workloads won’t be portable.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = true;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

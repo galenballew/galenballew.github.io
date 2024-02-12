@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.549">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2019-09-09">
+<meta name="description" content="Dive deeper into the future of infrastructure.">
+
+<title>blog - TL;DR - Kubernetes Up &amp; Running, Part 2</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">blog</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/galenballew"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://linkedin.com/in/galenballew"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="mailto:galenballew@gmail.com"> <i class="bi bi-envelope-at" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">TL;DR - Kubernetes Up &amp; Running, Part 2</h1>
+                  <div>
+        <div class="description">
+          Dive deeper into the future of infrastructure.
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">gcp</div>
+                <div class="quarto-category">cloud</div>
+                <div class="quarto-category">k8s</div>
+                <div class="quarto-category">aws</div>
+                <div class="quarto-category">kubernetes</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">September 9, 2019</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<section id="abstract" class="level1">
+<h1>Abstract</h1>
+<p>These are my notes from reading <a href="https://smile.amazon.com/Kubernetes-Running-Dive-Future-Infrastructure/dp/1491935677"><em>Kubernetes Up &amp; Running</em></a> by Kelsey Hightower, Brendan Burns, and Joe Beda. Kelsey Hightower is a Staff Developer Advocate for the Google Cloud Platform. Brendan Burns is a Distinguished Engineer in Microsoft Azure and cofounded the Kubernetes project at Google. Joe Beda is the CTO of Heptio and cofounded the Kubernetes project, as well as Google Compute Engine.</p>
+<p>This is a phenomenal book that covers both the whys and hows of <a href="https://kubernetes.io/">Kubernetes</a>. I read the 1st edition, but a 2nd edition is coming out soon. I’m using this as study material for my <a href="https://www.cncf.io/certification/ckad/">CKAD</a> and <a href="https://training.linuxfoundation.org/certification/certified-kubernetes-administrator-cka/">CKA</a> certifications.</p>
+<p>This article is part of a series. You can read <a href="%7B%7B%20site.baseurl%20%7D%7D%7B%%20link%20_posts/2019-09-08-kuar-part1.md%20%%7D">Part 1 here.</a></p>
+<p><strong>Note to the reader:</strong> Throughout these articles, I am loose with my formatting of Kubernetes objects, especially in the case of <code>Service</code> versus Service. This is to avoid confusion with the common term of service. <code>Constant width</code> formatting is typically reserved for program elements, such as k8s API objects, parameters, or processes.</p>
+<section id="chapter-5-pods" class="level2">
+<h2 class="anchored" data-anchor-id="chapter-5-pods">Chapter 5: Pods</h2>
+<p>Pods represent a collection of application containers and volumes running in the same execution environment. Pods are the most atomic object within Kubernetes, therefore all containers within a Pod will always land on the same node within a cluster. Each container runs in its own <code>cgroup</code> and we will leverage that using <code>requests</code> and <code>limits</code> later on in this chapter. All applications running in a Pod share the same hostname, IP address and port space. Containers within a Pod can communicate with one another, but are isolated from containers in other Pods. Since a Pod can be composed of multiple containers, it’s natural to ask which containers should be included in any given Pod. The question to ask yourself is <em>“Will these containers work correctly if they land on separate machines?”</em> If the answer is “no”, then the containers should be placed in the same Pod. As we will see, it’s often the case that containers within the same Pod interact via a shared volume that is also within the Pod.</p>
+<p>Pods are managed via YAML or JSON templates known as a Pod manifest. These manifests are text-file representations of the k8s API object. They are sent to <a href="https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/"><code>kube-apiserver</code></a>, which in turn passes them to the <a href="https://kubernetes.io/docs/reference/command-line-tools-reference/kube-scheduler/"><code>kube-scheduler</code></a>. The scheduler then places the Pod onto a node that has sufficient resources. A daemon on the node, named <a href="https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/"><code>kubelet</code></a>, creates the containers declared in the Pod manifest and performs any health checks. Once a Pod as been scheduled to a node, there is no rescheduling if the node fails. The Kubernetes scheduler takes this into account and tries to ensure that Pods from the same application are distributed onto different nodes, in order to avoid a single failure domain. Once scheduled, will only change nodes if they are explicitly destroyed and rescheduled. When a Pod is deleted, it has a termination grace period with a default value of 30 seconds. This grace period allows the Pod to finish serving any active requests that it is processing before terminating. Any data stored within the containers on the Pod will be lost when the Pod terminates. The <code>PersistentVolume</code> object can be used to store data across multiple instances of Pod and their subsequent lifespans.</p>
+<p>Once a Pod is running, you may want to access it even if it is not serving traffic on the Internet. You can use <a href="https://kubernetes.io/docs/tasks/access-application-cluster/port-forward-access-application-cluster/">port forwarding</a> to create a secure tunnel from your local machine, through the Kubernetes master, to the instance of the Pod running on a worker node.</p>
+<p>There are several types of health checks for containers within Kubernetes. The first is a <em>process health check</em>. This health check simply checks if the main process of your application is running. If it isn’t, Kubernetes restarts it. This health check is automatic and does not need to be defined. A simple process check is often insufficient however. Imagine that your process is deadlocked - the health check will be green, but your application will be red. To address this, Kubernetes supports <em>liveness health checks.</em> Liveness health checks are defined within the Pod manifest per container and each container is health checked separately. They run application-specific logic to ensure that the application is not only running, but functioning properly. Lastly, there are <em>readiness health checks.</em> These checks are configured similarly to liveness probes. The difference is that containers which fail a liveness health check are restarted while containers that file a readiness probe are removed from Service load balancers. Combining liveness and readiness probes ensures that all traffic is routed to healthy containers that have capacity to fulfill the request. Kubernetes also supports <code>tcpSocket</code> health checks, which are useful for databases r other non-HTTP-based APIs. Finally, k8s supports <code>exec</code> probes. These execute a script in the context of a container - if the script returns zero, the probe succeeds. These are useful for applications where validation logic doesn’t fit neatly into an HTTP request.</p>
+<p>One of the most powerful features of Pods is the ability to define the minimum and maximum compute resources available for the containers within the Pod. By rightsizing container requirements, <code>kube-scheduler</code> is able to efficiently pack Pods onto nodes, thereby driving up utilization. <em>Requests</em> specify the minimum resources needed by a Pod in order to be scheduled - <em>limits</em> specify the maximum resources a container may use. Both are declared at the container level within the Pod manifest. It’s worth mentioning that memory (unlike CPU) cannot be redistributed if it has already been allocated to a container process. Therefore, when the system runs out of memory, <code>kubelet</code> terminates containers whose memory usage is greater than their requested amount.</p>
+<p>Volumes are used for containers within a Pod to share some kind of state information. They can be used to communicate, synchronize, cache, or even persist state data beyond the lifespan of the Pod itself. Volumes are declared within the Pod manifest and container declarations may include <code>volumeMounts</code>. It’s important to note that containers can mount the same volume to different paths. <code>emptyDir</code> volumes can be used to create a shared filesystem between containers. <code>hostDir</code> volumes can grant access to the underlying host filesystem. There are multiple supported protocols for remote network storage volumes that can be used for truly persistent data, including NFS, iSCSI, and cloud network storage like AWS EBS, Azure FDS, and GCP Persistent Disk.</p>
+</section>
+<section id="chapter-6-labels-and-annotations" class="level2">
+<h2 class="anchored" data-anchor-id="chapter-6-labels-and-annotations">Chapter 6: Labels and Annotations</h2>
+<p><em>Labels</em> and <em>annotations</em> are types of metadata about Kubernetes API objects. They each serve a different purpose. Labels are used to <strong>identify</strong> and <strong>select</strong> sets of objects, while annotations are designed to hold nonidentifying information that can be leveraged by tools and libraries.</p>
+<p>Kubernetes uses labels to group and select objects. There are a variety of ways to express the selection logic:</p>
+<table class="table">
+<colgroup>
+<col style="width: 41%">
+<col style="width: 58%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><strong>Operator</strong></th>
+<th style="text-align: center;"><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><code>key=value</code></td>
+<td style="text-align: center;"><code>key</code> is set to <code>value</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><code>key!=value</code></td>
+<td style="text-align: center;"><code>key</code> is not set to <code>value</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><code>key in (value1, value2)</code></td>
+<td style="text-align: center;"><code>key</code> is one of <code>value1</code> or <code>value2</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><code>key notin (value1, value2)</code></td>
+<td style="text-align: center;"><code>key</code> is not one of <code>value1</code> or <code>value2</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><code>key</code></td>
+<td style="text-align: center;">key is set</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><code>!key</code></td>
+<td style="text-align: center;">key is not set</td>
+</tr>
+</tbody>
+</table>
+<p>You can use <code>kubectl</code> and labels to find and manage objects. Kubernetes itself also uses labels to accomplish the same thing.</p>
+<p>Annotations are key-value pairs, much like labels, but they have less restrictions around string formatting. While this makes them exceedingly useful, it also means that there is no guarantee that the data contained in the annotation is valid. The nature/formatting of the data contained in the key-value pair can dictate whether it has to be an annotation or not. Outside of that, it’s a good practice to add information about an object as an annotation and promote it to a label if you find yourself wanting to use it in a selector.</p>
+<p>Annotations can be used to:<br>
+- Store comments about the latest change to an object.<br>
+- Communicate a special scheduling policy to a specialized scheduler. - Build, release, and image information from source version control. - Prototype alpha functionality of the Kubernetes API. - Track status during rolling deployments and provide the necessary information needed to roll back to a previous version if required. - This is the <strong>primary use case</strong> for annotations.</p>
+</section>
+<section id="chapter-7-service-discovery" class="level2">
+<h2 class="anchored" data-anchor-id="chapter-7-service-discovery">Chapter 7: Service Discovery</h2>
+<p><code>Service</code> objects are used to expose Pods within a cluster and load-balance across them. Usually, a <code>Service</code> uses a named label selector to identify the Pods, but it is also possible to <a href="https://kubernetes.io/docs/concepts/services-networking/service/#defining-a-service">define a <code>Service</code> without selectors</a>. By default, when a <code>Service</code> is created, k8s assigns it a virtual IP called a <em>cluster IP</em>. The cluster IP load-balances across the selected Pods. It also has a DNS name within <code>kube-dns</code>. In true k8s-building-on-k8s fashion, <code>kube-dns</code> is a <code>Service</code> with a <code>ClusterIP</code>. Because <code>Service</code> objects are responsible for load-balancing, they also handle the management of readiness checks. Besides <code>ClusterIP</code>, there are a few other <code>ServiceTypes</code>.</p>
+<p><code>NodePort</code> builds upon <code>ClusterIP</code> and is used to serve traffic from outside of the cluster. In addition to a <code>ClusterIP</code>, <code>kube-apiserver</code> assigns a port to the <code>Service</code> (or you can specify the port yourself) and all nodes will forward traffic to that port to the <code>Service</code>. This means that if you can reach any node in the cluster, you can contact a service without knowing where that service is running. <code>LoadBalancer</code> builds upon <code>NodePort</code>. It integrates with cloud providers to provision a new load balancer and direct it at the nodes in your cluster, resulting in an IP or hostname depending on the cloud provider. <strong>Bonus material:</strong> there is also <a href="https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types"><code>ExternalName</code></a> if your cluster is running CoreDNS v1.7 or higher.</p>
+<p>For every <code>Service</code> object, Kubernetes creates an <code>Endpoints</code> object which contains the IP addresses for that service. Kubernetes uses <code>Endpoints</code> to consume services rather than a cluster IP - which means your applications can too! By talking directly the k8s API, you can retrieve and call service endpoints. Kubernetes can also “watch” objects and be notified when they change, including the IPs associated with a service. Most applications are not written to be Kubernetes-native and therefore don’t leverage this, but it’s important to know that it’s possible.</p>
+<p>Regardless of the type, all <code>Service</code> objects will load-balance. This is made possible by a component named <code>kube-proxy</code> that runs on every node in the cluster. <code>kube-proxy</code> watches for new services via <code>kube-apiserver</code>. It programs a set of <code>iptables</code> rules (abstracted as <code>ClusterIP</code>) on in the kernel of the host, which change the destination of packets to one of the endpoints for that service. Whenever the set of endpoints changes, the set of <code>iptables</code> rules are rewritten. It is possible for a user to specify a specific cluster IP when creating a service. Once created, the cluster IP cannot be changed without deleting and rebuilding the <code>Service</code> object. In order to be assigned, a cluster IP must come from the cluster IP range defined by <code>kube-apiserver</code> and not already be in use. It’s possible to configure the service address range using the <code>--service-cluster-ip-range</code> flag on the <code>kube-apiserver</code> binary. The range should not overlap with the IP subnets and ranges assigned to each Docker bridge or Kubernetes node.</p>
+</section>
+<section id="chapter-8-replicasets" class="level2">
+<h2 class="anchored" data-anchor-id="chapter-8-replicasets">Chapter 8: ReplicaSets</h2>
+<p><code>ReplicaSets</code> are used to manage a set of Pods (even if the set consists of just a single Pod.) They accomplish this by using a very common pattern in Kubernetes called a <em>reconciliation loop.</em> The basic idea of a reconciliation loop is to input a <em>desired</em> state (e.g., the number of Pods we’d like to have running) and then constantly monitor or observe the <em>current</em> state of the k8s environment. If the reconciliation loop finds that <code>desired == current</code>, no action is taken, but if the opposite is true, it will create or destroy pods as needed until the the desired state is reached. Although, it’s important to understand that ReplicaSets an the Pods that they manage are loosely coupled. While a ReplicaSet may create or delete Pods, it does not own them. It manages them via a label selector defined in the ReplicaSet specification. This is also true of the Services that may load balance to the Pods - everything is very loosely coupled. This may seem daunting at first, but declarative configuration makes managing it much easier. There are also several distinct benefits to having these different k8s API objects being loosely coupled:<br>
+- ReplicaSets may be deployed on top of pre-existing Pods and “adopt” them. If the ReplicaSet were tightly coupled to the Pods it managed, the Pods would need to be destroyed and recreated or a cutover would have to happen, possibly disrupting service.<br>
+- When a Pod is misbehaving, you can alter it’s labels to effectively remove it from the ReplicaSet’s management. This allows the ReplicaSet to create a new, healthy Pod and the sick Pod is now quarantined. Developers can actively investigate the Pod in order to debug, rather than having only logs to sort through.</p>
+<p>Sometimes you may wonder which ReplicaSet is managing a Pod. This kind of discovery is enabled by the ReplicaSet creating an annotation on every Pod it creates. The annotation key is <code>kubernetes.io/created-by</code>. This annotation is best-effort and only created when the Pod is created by the ReplicaSet - a user can remove the annotation at any time. If you are otherwise interesting in finding the Pods managed by a particular ReplicaSet, you can perform <code>$ kubectl get pods -l &lt;key1=value1&gt;,&lt;key2=value2&gt;</code>, where the labels are defined in the ReplicaSet spec. This is exactly the same API call that the ReplicaSet itself uses to find and manage its set of Pods.</p>
+<p>ReplicaSets support imperative scaling via <code>$ kubectl scale &lt;replica-set-name&gt; --replicas=4</code> for example. However, this is a stop gap measure to be sure. All declarative text-file configurations should be updated ASAP to reflect any imperative changes. This is to avoid a situation where the current state is dramatically different from a new, desired state being applied from a text-file configuration. Kubernetes also supports <em>horizontal pod autoscaling</em> (HPA). This is distinctly different from vertical pod autoscaling (giving Pods greater resource requests and limits) and cluster autoscaling (adding more worker nodes to the cluster). HPA requires the presence of the <code>heapster</code> Pod on your cluster, which included in most k8s installations by default and runs in the <code>kube-system</code> namespace. <code>heapster</code> keeps track of resource consumption metrics and provides an API to use when making autoscaling decisions. HPA is a separate k8s object from ReplicaSets and thus is loosely coupled. <strong>It is a bad idea to combine autoscaling with imperative or declarative management of the number of replicas.</strong> If you are using HPA, just manage the HPA object itself. Interfering with it could result in unexpected behavior.</p>
+<p>By default, when you delete a ReplicaSet, you delete the Pods it is managing. You can avoid this by setting <code>--cascade=false</code> in your command - e.g., <code>$ kubectl delete rs galens-rs --cascade=false</code>.</p>
+</section>
+</section>
+<section id="resources" class="level1">
+<h1>Resources:</h1>
+<ul>
+<li><em>Kubernetes Up &amp; Running</em> <a href="https://github.com/kubernetes-up-and-running">GitHub repository</a></li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = true;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
