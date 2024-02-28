@@ -3,7 +3,7 @@ title: 'GCP Professional Cloud Developer Certification'
 date: 2019-08-12 
 description: Become the AppDev wizard you were meant to be.
 categories: [gcp, certification, devops]
-banner: './badge.png'
+image: './badge.png'
 ---
 # Abstract
 

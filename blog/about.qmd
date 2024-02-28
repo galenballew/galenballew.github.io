@@ -1,10 +1,10 @@
 ---
-title: "About"
+title: "Galen Ballew"
 
 about:
   id: hero-heading
-  template: trestles
-  image: profile.jpg
+  template: marquee
+  image: static/profile3.jpg
   links:
     - icon: envelope-at
       text: email
@@ -16,27 +16,29 @@ about:
       text: LinkedIn
       href: https://linkedin.com/in/galenballew
 ---
-
-### This content appears above the formatted about page content.
-
 :::{#hero-heading}
 
-Finley Malloc is the Chief Data Scientist at Wengo Analytics. When not innovating on data platforms, Finley enjoys spending time unicycling and playing with her pet iguana.
+Galen is a leader, engineer, and lifelong learner.
 
-## Education
+He has 8 years of professional experience in engineering and technical leadership, with a demonstrated track record of successes in creating enterprise-scale cloud platforms, developing strategic roadmaps, and building consensus across leadership, engineering, and business stakeholders.
+
+He is particularly passionate about artificial intelligence and machine learning technologies. Projects particularly interesting to Galen involve computer vision, robotics, autonomous systems, multi-modal models, and agent-based systems.
+
+<!-- ## Education
+
+University of Washington | Seattle WA
+PhD in Mathematics | Sept 2011 - June 2015
 
 University of California, San Diego | San Diego, CA
 PhD in Mathematics | Sept 2011 - June 2015
 
-Macalester College | St. Paul MA
-B.A in Economics | Sept 2007 - June 2011
+University of California, San Diego | San Diego, CA
+PhD in Mathematics | Sept 2011 - June 2015
 
 ## Experience
 
 Wengo Analytics | Head Data Scientist | April 2018 - present
 
-GeoScynce | Chief Analyst | Sept 2012 - April 2018
+GeoScynce | Chief Analyst | Sept 2012 - April 2018 -->
 
 :::
-
-### This content appears below the formatted about page content.

@@ -2,16 +2,20 @@ project:
   type: website
 
 website:
-  title: "blog"
+  title: "Galen Ballew"
   navbar:
     right:
-      - about.qmd
+      - text: "About Galen"
+        file: about.qmd
+      - text: "Resume"
+        file: "static/ballew_resume_2021.pdf"
       - icon: github
         href: https://github.com/galenballew
       - icon: linkedin
         href: https://linkedin.com/in/galenballew
       - icon: envelope-at
         href: mailto:galenballew@gmail.com
+  favicon: /static/favicon.png
 format:
   html:
     theme:

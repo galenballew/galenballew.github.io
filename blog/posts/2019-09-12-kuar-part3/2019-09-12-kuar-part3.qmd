@@ -3,7 +3,7 @@ title: 'TL;DR - Kubernetes Up & Running, Part 3'
 date: "2019-09-12"
 description: How deep it goes, no one knows.
 categories: [gcp, cloud, k8s, aws, kubernetes]
-banner: './k8s.png'
+image: './k8s.png'
 ---
 
 # Abstract

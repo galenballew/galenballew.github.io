@@ -3,6 +3,7 @@ title: 'Why and How Captialism Needs to be Reformed by Ray Dalio'
 date: "2019-08-23"
 excerpt: Ray Dalio's take on the current economic position of the USA. 
 categories: [tldr, finance]
+image: "bw.jpg"
 ---
 
 # Abstract

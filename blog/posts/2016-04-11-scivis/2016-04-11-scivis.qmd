@@ -3,6 +3,7 @@ title: "SciVis 2016"
 date: "2016-04-11"
 description: "Cavern Halos: Dark Sky Project visualization"
 categories: [visualization]
+image: "scivis.png"
 ---
 
 <p align="center">

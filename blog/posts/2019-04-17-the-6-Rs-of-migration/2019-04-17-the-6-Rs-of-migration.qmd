@@ -1,9 +1,9 @@
 ---
 title: 'The 6 Rs of Cloud Migration'
-date: "2019-04-24"
+date: "2019-04-17"
 description: TL;DR on this AWS blog post about 6 migration strategies.
 categories: [tldr, cloud, aws]
-banner:
+image: "logo.jpg"
 ---
 
 # Abstract

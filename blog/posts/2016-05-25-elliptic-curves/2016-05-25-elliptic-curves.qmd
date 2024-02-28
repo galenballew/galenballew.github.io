@@ -3,6 +3,7 @@ title: "Elliptic Curves"
 date: "2016-05-25"
 description: "Elliptic curves with complex multiplication give rise to tori over the complex numbers"
 categories: [mathematics, 3d printing, autodesk maya]
+image: "tori.png"
 ---
 
 ### Elliptic curves with complex multiplication give rise to tori over the complex numbers  

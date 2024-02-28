@@ -3,7 +3,7 @@ title: 'How to Win Friends & Influence People'
 date: "2020-09-15"
 description: "TL;DR - because people ain't easy."
 categories: [tldr]
-banner: './cover.jpeg'
+image: './cover.jpeg'
 ---
 
 ### <a name="abstract"></a>[Abstract](#abstract)

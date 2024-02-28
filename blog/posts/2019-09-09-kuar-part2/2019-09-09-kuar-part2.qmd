@@ -3,7 +3,7 @@ title: 'TL;DR - Kubernetes Up & Running, Part 2'
 date: "2019-09-09"
 description: Dive deeper into the future of infrastructure.
 categories: [gcp, cloud, k8s, aws, kubernetes]
-banner: './k8s.png'
+image: './k8s.png'
 ---
 
 # Abstract

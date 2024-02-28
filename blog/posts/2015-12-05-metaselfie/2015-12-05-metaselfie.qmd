@@ -3,6 +3,7 @@ title: "Metaselfie"
 date: "2015-12-05"
 description: "Fractal animation with original soundscape"
 categories: [visualization, autodesk maya, mathematics]
+image: "flower.png"
 ---
 <p align="center">
 <iframe width="560" height="315" src="https://www.youtube.com/embed/wMAPatgvSxE" frameborder="0" allowfullscreen></iframe>

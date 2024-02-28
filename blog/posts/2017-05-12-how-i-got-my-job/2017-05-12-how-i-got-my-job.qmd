@@ -3,7 +3,7 @@ title: "How I Landed My Dream Job Working On Self-Driving Cars"
 date: "2017-05-12"
 description: "From a BS in Mathematics to working on bleeding-edge technology"
 categories: [data science, machine learning, bootcamps, self-driving cars]
-banner:
+image: "tesla.png"
 ---
 **May 12, 2017 -** This article was published by [Udacity](https://medium.com/udacity/how-i-landed-a-job-working-on-self-driving-cars-bf9d0d1f119e) on their [Medium](https://medium.com/) blog. 
 

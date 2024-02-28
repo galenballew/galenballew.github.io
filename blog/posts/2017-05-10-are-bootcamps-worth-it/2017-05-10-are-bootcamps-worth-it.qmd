@@ -3,7 +3,7 @@ title: "Are Tech Bootcamps Worth It?"
 date: "2017-05-10"
 description: "My 12 weeks of data science at Metis"
 categories: [data science, machine learning, bootcamps]
-banner:
+image: "metis.png"
 ---
 **May 11, 2017 -** This article was published by [Towards Data Science](https://towardsdatascience.com/arebootcampsworthit-b8eb4d28770d) on their [Medium](https://medium.com/) blog. 
 

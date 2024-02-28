@@ -1,9 +1,9 @@
 ---
 title: 'AWS Solutions Architect Professional Study Guide'
-date: "2019-02-24"
+date: "2019-04-24"
 description: A study guide based on the new 2019 exam guide. 
 categories: [aws, cloud, certification]
-banner: './sap.png'
+image: 'sap.png'
 ---
 # Abstract
 

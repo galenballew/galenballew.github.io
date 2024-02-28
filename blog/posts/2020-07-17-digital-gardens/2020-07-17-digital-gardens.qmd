@@ -3,7 +3,7 @@ title: 'Digital Gardens'
 date: "2020-07-17"
 description: Thoughts and inspiration about building your digital garden for knowledge management and networked thought.
 categories: [knowledge management, blogging]
-banner:
+image: "graph.jpg"
 ---
 
 I found out about [Roam Research](https://roamresearch.com/) a few weeks back (on Hacker News, I think.) I fell into its rabbit hole for a little bit and immediately recognized that I had been seeking for a better way to express and connect my thoughts. I have been using [Evernote](https://evernote.com/) for the longest time. It gets the job done. Just so long as the job is "archive this thought somewhere so that I don't forget it forever". I don't think that Evernote, as a tool, has actually helped to increase the depth, breadth, or richness of my thoughts.  

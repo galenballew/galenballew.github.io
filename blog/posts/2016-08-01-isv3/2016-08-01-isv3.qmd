@@ -3,6 +3,7 @@ title: "Interactive Visualization of S3"
 date: "2016-08-01"
 description: "Stereographic projection of a 4-dimensional dataset into 3d virtual reality"
 categories: [mathematics, unity, vr, visualization]
+image: "pml.png"
 ---
 
 

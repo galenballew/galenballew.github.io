@@ -3,6 +3,7 @@ title: "VisAP 2015"
 date: "2015-10-27"
 description: "Data Improvisations: The IEEE Visual Arts Program Exhibition"
 categories: [visualization]
+image: "visap.png"
 ---
 
 <p align="center">

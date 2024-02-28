@@ -3,6 +3,7 @@ title: "Interactive Fractal Generator"
 date: "2015-04-11"
 description: "Interactive Unity3d build of a box fractal"
 categories: [mathematics, unity, visualization]
+image: "fractal-interactive.png"
 ---
 <iframe  width="560" height="315" src="https://www.youtube.com/embed/19sgSaJe0JM" frameborder="0" allowfullscreen></iframe>
 
